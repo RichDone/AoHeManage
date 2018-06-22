@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>服务收费</title>
+    <meta charset="utf-8" />
+    <script src="../Script/global.js"></script>
+    <link href="../Css/style.css" rel="stylesheet" />
+    <script src="../Script/jquery-1.4.2.min.js"></script>
+    <script src="../times/WdatePicker.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var urlParam = GetQueryString("serviceReserveID");
+            $("#serviceReserveID").val(urlParam);
+            getServiceReserveInfo();
+            //设置iframe高度
+            var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
+            $("#iframInfo", window.parent.document).height(iframeHeight);
+        })
+        var sortfield = "";
+        var sorttype = "";
+        var saveflag = "";
+        function setsort(_sortfield) {
+            if (sortfield != _sortfield) {
+                sorttype = "asc";
+                sortfield = _sortfield;
+            }
+            else {
+                if (sorttype == "asc") {
+                    sorttype = "desc";
+                }
+                else {
+                    sorttype = "asc";
+                }
+            }
+            var currentpage = $("#hid_currentpage").val();
+            getPage(currentpage);
+        }
+        //跳转页面
+        function pagespress() {
+            var k = window.event.keyCode;
+            if ((k == 46) || (k == 8) || (k >= 48 && k <= 57) || (k >= 96 && k <= 105) || (k >= 37 && k <= 40)) {
+            }
+            else if (k == 13) {
+                var topage = $("#txt_topages").val();
+                if (topage != '0') {
+                    if (parseInt(topage, 10) > parseInt($("#hid_totalpage").val(), 10)) {
+                        topage = $("#hid_totalpage").val();
+                        $("#txt_topages").val(topage);
+                    }
+                    getPage(topage);
+                }
+            }
+            else {
+                window.event.returnValue = false;
+            }
+        }
+        //点击GO按钮进行翻页动作
+        function pagespressForGo() {
+            var topage = $("#txt_topages").val();
+            if (topage != '0') {
+                if (parseInt(topage, 10) > parseInt($("#hid_totalpage").val(), 10)) {
+                    topage = $("#hid_totalpage").val();
+                    $("#txt_topages").val(topage);
+                }
+                getPage(topage);
+            }
+        }
+        function getPage(currentpage) {
+            ChangeShowPage('servicePay_list', 'servicePay_add');
+            var pagesize = "15";
+            var queryDate = $("#queryDate").val();
+            var serviceReserveID = $("#serviceReserveID").val();
+            if ($("#sel_pagesize").val() != "" && typeof ($("#sel_pagesize").val()) != "undefined") { pagesize = $("#sel_pagesize").val(); }
+            var querydata = "&serviceReserveID=" + serviceReserveID + "&queryDate=" + queryDate + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
+            $.ajax(
+            {
+                type: "GET",
+                url: "../MainHandler.ashx?action=getRecordPage_ServicePay",
+                dataType: 'text',
+                data: encodeURI(querydata),
+                success: function (result) {
+                    $("#servicePay_tb").html(result);
+                    //设置iframe高度
+                    var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
+                    $("#iframInfo", window.parent.document).height(iframeHeight);
+                }
+            });
+        }
+        function Save() {
+            var ID = $("#ID").val();
+            var serviceReserveID = $("#serviceReserveID").val();
+            var payDate = $("#payDate").val();
+            var beginDate = $("#beginDate").val();
+            var endDate = $("#endDate").val();
+            var amount = $("#amount").val();
+            //验证非空
+            if (serviceReserveID == "") {
+                alert("请选择具体服务预订！");
+                return false;
+            }
+            if (payDate == "") {
+                alert("请输入缴费日期！");
+                return false;
+            }
+            if (beginDate == "") {
+                alert("请输入开始时间！");
+                return false;
+            }
+            if (endDate == "") {
+                alert("请输入结束时间！");
+                return false;
+            }
+            if (amount == "") {
+                alert("请输入金额！");
+                return false;
+            }
+            if (isNaN(amount)) {
+                alert("请输入正确的金额！");
+                return false;
+            }
+            var querydata = "&ID=" + ID + "&serviceReserveID=" + serviceReserveID + "&amount=" + amount
+                 + "&payDate=" + payDate + "&beginDate=" + beginDate + "&endDate=" + endDate + "&saveflag=" + saveflag;
+            $.ajax(
+            {
+                type: "GET",
+                url: "../MainHandler.ashx?action=SaveServicePay",
+                dataType: 'text',
+                data: encodeURI(querydata),
+                success: function (result) {
+                    if (result != null && result != "") {
+                        if (parseInt(result) > 0) {
+                            alert("保存服务收费成功！");
+                            getPage(1);
+                        }
+                        else {
+                            alert("保存服务收费失败，请重新操作！");
+                        }
+                    }
+                }
+            });
+        }
+        function GetServicePay(ID) {
+            var querydata = "&ID=" + ID;
+            $.ajax(
+            {
+                type: "GET",
+                url: "../MainHandler.ashx?action=GetServicePayByID",
+                dataType: 'json',
+                data: encodeURI(querydata),
+                success: function (result) {
+                    if (result != null && result != "") {
+                        $("#ID").val(result.ID);
+                        $("#serviceReserveID").val(result.ServiceReserveID);
+                        $("#amount").val(result.Amount);
+                        if (result.BeginDate != null && result.BeginDate != "") {
+                            var beginDate = new Date(parseInt(result.BeginDate.substr(6))).ToString("yyyy-MM-dd");
+                            $("#beginDate").val(beginDate);
+                        }
+                        else {
+                            $("#beginDate").val("");
+                        }
+                        if (result.EndDate != null && result.EndDate != "") {
+                            var endDate = new Date(parseInt(result.EndDate.substr(6))).ToString("yyyy-MM-dd");
+                            $("#endDate").val(endDate);
+                        }
+                        else {
+                            $("#endDate").val("");
+                        }
+                        if (result.PayDate != null && result.PayDate != "") {
+                            var payDate = new Date(parseInt(result.PayDate.substr(6))).ToString("yyyy-MM-dd");
+                            $("#payDate").val(payDate);
+                        }
+                        else {
+                            $("#payDate").val("");
+                        }
+                    }
+                    else {
+                        alert("未查询到数据！");
+                        return false;
+                    }
+                }
+            });
+        }
+        function ChangeShowPage(showID, hideID) {
+            $("#" + showID).show();
+            $("#" + hideID).hide();
+            //设置iframe高度
+            var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
+            $("#iframInfo", window.parent.document).height(iframeHeight);
+        }
+        function ShowInsertPage(flag, ID) {
+            saveflag = flag;
+            if (saveflag == "add") {
+                $("#ID").val("");
+                $("#payDate").val("");
+                $("#beginDate").val("");
+                $("#endDate").val("");
+                $("#amount").val("");
+                $("#servicePay_add .notallow_edit").attr("disabled", false);
+            }
+            if (saveflag == "edit") {
+                GetServicePay(ID);
+                $("#servicePay_add .notallow_edit ").attr("disabled", true);
+            }
+            ChangeShowPage('servicePay_add', 'servicePay_list')
+        }
+        function getServiceReserveInfo() {
+            var querydata = "&serviceReserveID=" + $("#serviceReserveID").val();
+            $.ajax(
+            {
+                type: "GET",
+                url: "../MainHandler.ashx?action=getServiceReserveByWhere",
+                dataType: 'text',
+                data: encodeURI(querydata),
+                success: function (result) {
+                    $("#serviceReserve_tb").html(result);
+                    getPage(1);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <fieldset>
+            <legend><span class="field_leg">服务预订详情</span></legend>
+            <div id="serviceReserve_tb">
+            </div>
+        </fieldset>
+    </div>
+    <div id="servicePay_list" class="mt_20">
+        <fieldset>
+            <legend><span class="field_leg">服务收费</span></legend>
+            <div class="select_where">
+                <span>收费日期：</span>
+                <input type="text" id="queryDate" class="Wdate" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
+                <span class="ml_50"><input class="selectBtn" type="button" value="查询" onclick="getPage(1)" /></span>
+                <span class="ml_50"><input class="selectBtn" type="button" value="新增" onclick="ShowInsertPage('add')" /></span>
+            </div>
+            <div id="servicePay_tb">
+            </div>
+        </fieldset>
+    </div>
+    <div id="servicePay_add" style="display:none">
+        <fieldset>
+            <legend><span class="field_leg">服务执行</span></legend>
+            <div>
+                <table class="insert_tb" cellpadding="5" cellspacing="5">
+                    <tr>
+                        <td>缴费日期：</td>
+                        <td>
+                            <input type="text" id="payDate" class="Wdate" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
+                            <input type="hidden" id="ID" />
+                            <input type="hidden" id="serviceReserveID" />
+                        </td>
+                        <td>开始时间：</td>
+                        <td>
+                            <input type="text" id="beginDate" class="Wdate" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
+                        </td>
+                        <td>结束时间：</td>
+                        <td>
+                            <input type="text" id="endDate" class="Wdate" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>金额：</td>
+                        <td>
+                            <input type="text" class="normalInput" id="amount" required/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="footLineBtn">
+                    <input type="button" value="返回" class="saveBtn" onclick="ChangeShowPage('servicePay_list','servicePay_add')" />
+                    <input type="button" value="保存" class="saveBtn ml_20" onclick="Save()" />
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</body>
+</html>
