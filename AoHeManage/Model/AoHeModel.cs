@@ -112,6 +112,11 @@ namespace AoHeManage.Model
         public int EvaluateType { get; set; }
         public DateTime CreateOn { get; set; }
         public string Remark { get; set; }
+        public string Name { get; set; }
+        public int Sex { get; set; }
+        public string PostName { get; set; }
+        public string IDCardNo { get; set; }
+        public string StaffOtherNo { get; set; }
     }
     public class AccidentFollow
     {

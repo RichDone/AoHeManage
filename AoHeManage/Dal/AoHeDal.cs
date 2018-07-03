@@ -929,6 +929,50 @@ namespace AoHeManage.Dal
             strSql.AppendFormat(" (null,'{0}','{1}','{2}','{3}') ", model.StaffNo, model.EvaluateType, model.CreateOn, model.Remark);
             return DbHelperSQL.ExecuteSql(strSql.ToString());
         }
+
+        public int UpdateStaffEvaluate(StaffEvaluate model)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" update staffevaluate ");
+            strSql.AppendFormat("  set StaffNo='{0}',EvaluateType='{1}',Remark='{2}',CreateOn='{3}' ",
+                 model.StaffNo, model.EvaluateType, model.Remark, model.CreateOn);
+            strSql.AppendFormat(" where StaffEvaluateID='{0}' ", model.StaffEvaluateID);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+
+        public int DeleteStaffEvaluate(int ID)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" delete from staffevaluate where StaffEvaluateID ='{0}' ", ID);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+
+        public StaffEvaluate GetStaffEvaluateByID(int ID)
+        {
+            StaffEvaluate model = new StaffEvaluate();
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select a.*,b.Name,b.Sex,c.PostName,b.IDCardNo,b.StaffOtherNo  from staffevaluate a ");
+            strSql.AppendLine(" left join staffinfo b on a.StaffNo=b.StaffNo ");
+            strSql.AppendLine(" inner join postinfo c on b.PostLevel=c.PostLevel ");
+            strSql.AppendFormat(" where a.StaffEvaluateID= '{0}' ", ID);
+            DataSet ds = new DataSet();
+            ds = DbHelperSQL.Query(strSql.ToString());
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                var row = ds.Tables[0].Rows[0];
+                model.StaffEvaluateID = ID;
+                model.EvaluateType = Convert.ToInt16(row["EvaluateType"]);
+                model.StaffNo = row["StaffNo"].ToString();
+                model.Sex = Convert.ToInt16(row["Sex"]);
+                model.Name = row["Name"].ToString();
+                model.PostName = row["PostName"].ToString();
+                model.IDCardNo = row["IDCardNo"].ToString();
+                model.StaffOtherNo = row["StaffOtherNo"].ToString();
+                model.Remark = row["Remark"].ToString();
+                model.CreateOn = Convert.ToDateTime(row["CreateOn"]);
+            }
+            return model;
+        }
         #endregion
 
         #region 房间

@@ -709,6 +709,9 @@ namespace AoHeManage
             #region 添加员工考评记录
             if (action == "AddStaffEvaluate")
             {
+                var saveflag = context.Request.Params["saveflag"];
+                var staffEvaluateID = context.Request.Params["staffEvaluateID"];
+
                 var staffNo = context.Request.Params["staffNo"];
                 var evaluateType = context.Request.Params["evaluateType"];
                 var createOn = context.Request.Params["createOn"];
@@ -718,8 +721,21 @@ namespace AoHeManage
                 model.CreateOn = Convert.ToDateTime(createOn);
                 model.EvaluateType = Convert.ToInt16(evaluateType);
                 model.Remark = remark;
-                var insertResult = dal.AddStaffEvaluate(model);
-                result = insertResult.ToString();
+
+                int excuteResult = 0;
+                if (saveflag == "add")
+                {
+                    excuteResult = dal.AddStaffEvaluate(model);
+                }
+                if (saveflag == "edit")
+                {
+                    model.StaffEvaluateID = Convert.ToInt16(staffEvaluateID);
+                    excuteResult = dal.UpdateStaffEvaluate(model);
+                }
+                result = excuteResult.ToString();
+
+                //var insertResult = dal.AddStaffEvaluate(model);
+                //result = insertResult.ToString();
             }
             #endregion
 
@@ -749,6 +765,24 @@ namespace AoHeManage
                 }
                 result = getRecordPage_StaffEvaluateInfo(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
                 strWhere = null;
+            }
+            #endregion
+
+            #region 删除员工考评
+            if (action == "DeleteStaffEvaluate")
+            {
+                var ID = context.Request.Params["ID"];
+                var deleteResult = dal.DeleteStaffEvaluate(Convert.ToInt16(ID));
+                result = deleteResult.ToString();
+            }
+            #endregion
+
+            #region 根据ID获取员工考评
+            if (action == "GetStaffEvaluateByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dal.GetStaffEvaluateByID(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
             }
             #endregion
 
@@ -4485,7 +4519,8 @@ namespace AoHeManage
                            + "<th style='width:15%'>姓名</th>"
                            //+ "<th style='width:10%'>考评类型</th>"
                            + "<th style='width:15%'>记录日期</th>"
-                           + "<th style='width:50%'>详情</th>"
+                           + "<th style='width:40%'>详情</th>"
+                           + "<th style='width:10%'>操作</th>"
                            );
             tblHtml.Append("</tr><tbody id=wjtbl>");
             if (dt != null)
@@ -4501,6 +4536,7 @@ namespace AoHeManage
                     var createOnDate = Convert.ToDateTime(dt.Rows[i]["CreateOn"]).ToString("yyyy-MM-dd");
                     tblHtml.Append("<td>" + createOnDate + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"EditStaffEvaluate(" + dt.Rows[i]["StaffEvaluateID"] + ")\">编辑</a><a class='ml_20' href='javascript:void(0)' onclick=\"DeleteStaffEvaluate(" + dt.Rows[i]["StaffEvaluateID"] + ")\">删除</a></td>");
                     tblHtml.Append("</tr>");
                 }
             }

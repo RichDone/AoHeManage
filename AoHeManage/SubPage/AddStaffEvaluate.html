@@ -9,12 +9,19 @@
     <script src="../Script/jquery-1.4.2.min.js"></script>
     <script src="../times/WdatePicker.js"></script>
     <script type="text/javascript">
+        var saveflag = "add";
         $(function () {
             var nowDate = new Date().ToString("yyyy-MM-dd");
             $("#createOn").val(nowDate);
             //设置iframe高度
             var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
             $("#iframInfo", window.parent.document).height(iframeHeight);
+            var urlParam = GetQueryString("staffEvaluateID");
+            if (urlParam != null && urlParam != "" && urlParam != undefined) {
+                $("#staffEvaluateID").val(urlParam);
+                saveflag = "edit"
+                GetStaffEvaluate(urlParam);
+            }
         })
         function FindStaff() {
             var input = $("#chooseStaff").val();
@@ -82,6 +89,7 @@
             $("#chooseStaffList").empty();
         }
         function AddStaffEvaluate() {
+            var staffEvaluateID = $("#staffEvaluateID").val();
             var staffNo = $("#staffNo").val();
             var createOn = $("#createOn").val();
             var evaluateType = $("#evaluateType").val();
@@ -106,7 +114,7 @@
                     return false;
                 }
             }
-            var querydata = "&staffNo=" + staffNo + "&evaluateType=" + evaluateType + "&createOn=" + createOn + "&remark=" + remark;
+            var querydata = "&staffEvaluateID=" + staffEvaluateID + "&staffNo=" + staffNo + "&evaluateType=" + evaluateType + "&createOn=" + createOn + "&remark=" + remark + "&saveflag=" + saveflag;
             $.ajax(
             {
                 type: "GET",
@@ -130,6 +138,45 @@
             $("#insert .normalInput").val('');
             $("#insert #remark").html('');
             $("#insert #chooseStaffList").empty();
+        }
+        function GetStaffEvaluate(ID) {
+            var querydata = "&ID=" + ID;
+            $.ajax(
+            {
+                type: "GET",
+                url: "../MainHandler.ashx?action=GetStaffEvaluateByID",
+                dataType: 'json',
+                data: encodeURI(querydata),
+                success: function (result) {
+                    if (result != null && result != "") {
+                        $("#staffEvaluateID").val(result.StaffEvaluateID);
+                        $("#chooseStaff").val(result.Name);
+
+                        $("#staffNo").val(result.StaffNo);
+                        $("#staffOtherNo").val(result.StaffOtherNo);
+                        $("#name").val(result.Name);
+                        var sex = result.Sex == "0" ? '男' : '女';
+                        $("#sex").val(sex);
+                        $("#postName").val(result.PostName);
+                        $("#IDCardNo").val(result.IDCardNo);
+                        $("#chooseStaffList").empty();
+
+                        $("#evaluateType").val(result.EvaluateType);
+                        $("#remark").html(result.Remark);
+                        if (result.CreateOn != null && result.CreateOn != "") {
+                            var createOn = new Date(parseInt(result.CreateOn.substr(6))).ToString("yyyy-MM-dd");
+                            $("#createOn").val(createOn);
+                        }
+                        else {
+                            $("#createOn").val("");
+                        }
+                    }
+                    else {
+                        alert("未查询到数据！");
+                        return false;
+                    }
+                }
+            });
         }
     </script>
 </head>
@@ -157,6 +204,7 @@
                         <td>
                             <input type="text" id="staffOtherNo" class="normalInput" disabled="disabled" />
                             <input type="hidden" id="staffNo" />
+                            <input type="hidden" id="staffEvaluateID" />
                         </td>
                         <td>姓名：</td>
                         <td><input type="text" id="name" class="normalInput" disabled="disabled" /></td>
