@@ -1180,6 +1180,10 @@ namespace AoHeManage.Dal
         {
             StringBuilder strSql = new StringBuilder();
             strSql.AppendLine(" select COUNT(1) as totalrow from ( ");
+
+            strSql.AppendLine(" select a.StaffNo,a.`Name`, ");
+            strSql.AppendLine(" IFNULL(b.NormalHours,0) as NormalHours,IFNULL(b.OtherHours,0) as OtherHours  ");
+            strSql.AppendLine(" from staffinfo a left join ( ");
             strSql.AppendLine(" select temp.StaffNo,temp.`Name`,SUM(temp.NormalHours) as NormalHours,SUM(temp.OtherHours) OtherHours from ( ");
             strSql.AppendLine(" select a.StaffNo,b.`Name`,SUM(a.Hours) as NormalHours,0 as OtherHours from schedualinfo a  ");
             strSql.AppendLine(" inner join staffinfo b on a.StaffNo = b.StaffNo ");
@@ -1189,8 +1193,11 @@ namespace AoHeManage.Dal
             strSql.AppendLine(" select a.StaffNo,b.`Name`,0 as NormalHours,SUM(a.Hours) as OtherHours from otherworktime a  ");
             strSql.AppendLine(" inner join staffinfo b on a.StaffNo = b.StaffNo  ");
             strSql.AppendFormat(" where 1=1 {0} ", strWhere_b);
-            strSql.AppendLine(" group by a.StaffNo,b.`Name`) temp group by temp.StaffNo,temp.`Name` order by (temp.NormalHours+temp.OtherHours) desc ) temptb;  ");
+            strSql.AppendLine(" group by a.StaffNo,b.`Name`) temp group by temp.StaffNo,temp.`Name` ) b on a.StaffNo=b.StaffNo order by (NormalHours+OtherHours) desc ) temptb;  ");
 
+            strSql.AppendLine(" select a.StaffNo,a.`Name`, ");
+            strSql.AppendLine(" IFNULL(b.NormalHours,0) as NormalHours,IFNULL(b.OtherHours,0) as OtherHours  ");
+            strSql.AppendLine(" from staffinfo a left join ( ");
             strSql.AppendLine(" select temp.StaffNo,temp.`Name`,SUM(temp.NormalHours) as NormalHours,SUM(temp.OtherHours) OtherHours from ( ");
             strSql.AppendLine(" select a.StaffNo,b.`Name`,SUM(a.Hours) as NormalHours,0 as OtherHours from schedualinfo a  ");
             strSql.AppendLine(" inner join staffinfo b on a.StaffNo = b.StaffNo ");
@@ -1201,7 +1208,7 @@ namespace AoHeManage.Dal
             strSql.AppendLine(" inner join staffinfo b on a.StaffNo = b.StaffNo  ");
             strSql.AppendFormat(" where 1=1 {0} ", strWhere_b);
             strSql.AppendLine(" group by a.StaffNo,b.`Name`) temp group by temp.StaffNo,temp.`Name` ");
-            strSql.AppendLine(" order by (temp.NormalHours+temp.OtherHours) desc ");
+            strSql.AppendLine("  ) b on a.StaffNo=b.StaffNo order by (NormalHours+OtherHours) desc ");
             //if (filedOrder.Trim() != "")
             //{
             //    strSql.Append(" order by " + filedOrder);

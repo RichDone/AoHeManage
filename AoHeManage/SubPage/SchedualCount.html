@@ -10,6 +10,10 @@
     <script src="../times/WdatePicker.js"></script>
     <script type="text/javascript">
         $(function () {
+            var nowDate = new Date().ToString("yyyy-MM-dd");
+            var lastMonth = new Date().AddMonths(-1).ToString("yyyy-MM-dd");
+            $("#beginDate").val(lastMonth);
+            $("#endDate").val(nowDate);
             getPage(1);
             //设置iframe高度
             var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
