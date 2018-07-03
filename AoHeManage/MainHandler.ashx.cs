@@ -260,6 +260,15 @@ namespace AoHeManage
             }
             #endregion
 
+            #region 删除意外事件
+            if (action == "DeleteAccident")
+            {
+                var ID = context.Request.Params["ID"];
+                var deleteResult = dal.DeleteAccident(Convert.ToInt16(ID));
+                result = deleteResult.ToString();
+            }
+            #endregion
+
             #region 到期时间设置
             if (action == "SaveExpireParam")
             {
@@ -4345,9 +4354,9 @@ namespace AoHeManage
                            + "<th style='width:4%'>发生时间</th>"
                            + "<th style='width:6%'>事件类型</th>"
                            + "<th style='width:6%'>发生地点</th>"
-                           + "<th style='width:18%'>伤情</th>"
+                           + "<th style='width:13%'>伤情</th>"
                            + "<th style='width:20%'>备注</th>"
-                           + "<th style='width:10%'>操作</th>"
+                           + "<th style='width:15%'>操作</th>"
                            );
             tblHtml.Append("</tr><tbody id=wjtbl>");
             if (dt != null)
@@ -4371,7 +4380,7 @@ namespace AoHeManage
                     tblHtml.Append("<td>" + dt.Rows[i]["Place"] + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i]["Condition"] + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
-                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"UpdateAccident(" + dt.Rows[i]["AccidentID"] + ")\">编辑</a><a class='ml_20' href='javascript:void(0)' onclick=\"FollowAccident(" + dt.Rows[i]["AccidentID"] + ")\">跟进</a></td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"UpdateAccident(" + dt.Rows[i]["AccidentID"] + ")\">编辑</a><a class='ml_20' href='javascript:void(0)' onclick=\"FollowAccident(" + dt.Rows[i]["AccidentID"] + ")\">跟进</a><a class='ml_20' href='javascript:void(0)' onclick=\"DeleteAccident(" + dt.Rows[i]["AccidentID"] + ")\">删除</a></td>");
                     tblHtml.Append("</tr>");
                 }
             }

@@ -233,6 +233,13 @@ namespace AoHeManage.Dal
             sqlList.Add(strSql.ToString());
             return DbHelperSQL.ExecuteSqlTran(sqlList);
         }
+
+        public int DeleteAccident(int ID)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" delete from accidentinfo where AccidentID ='{0}' ", ID);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
         #endregion
 
         #region 岗位信息
