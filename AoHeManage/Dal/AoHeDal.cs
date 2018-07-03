@@ -814,6 +814,16 @@ namespace AoHeManage.Dal
             return DbHelperSQL.ExecuteSql(strSql.ToString());
         }
 
+        public int UpdateDailyRecord(DailyRecord model)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" update dailyrecordinfo ");
+            strSql.AppendFormat("  set DailyRecordType='{0}',GuestID='{1}',Remark='{2}',ReportPerson='{3}',CreateOn='{4}' ",
+                 model.DailyRecordType, model.GuestID, model.Remark, model.ReportPerson, model.CreateOn);
+            strSql.AppendFormat(" where DailyRecordID='{0}' ", model.DailyRecordID);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+
         public DataSet GetDailyRecordStats(int currentPage, int pageSize, string strWhere, string filedOrder)
         {
             StringBuilder strSql = new StringBuilder();
@@ -842,6 +852,43 @@ namespace AoHeManage.Dal
             parameters[1].Value = pageSize;
 
             return DbHelperSQL.Query(strSql.ToString(), parameters);
+        }
+
+        public int DeleteDailyRecord(int ID)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" delete from dailyrecordinfo where DailyRecordID ='{0}' ", ID);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+
+        public DailyRecord GetDailyRecordByID(int ID)
+        {
+            DailyRecord model = new DailyRecord();
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select a.*,b.Name as GuestName,b.RoomNo,b.BedNo,b.Sex,b.NurseLevel,b.Age,c.Name as StaffName from dailyrecordinfo a ");
+            strSql.AppendLine(" inner join guestinfo b on a.GuestID=b.ID ");
+            strSql.AppendLine(" left join staffinfo c on a.ReportPerson=c.StaffNo ");
+            strSql.AppendFormat(" where a.DailyRecordID= '{0}' ", ID);
+            DataSet ds = new DataSet();
+            ds = DbHelperSQL.Query(strSql.ToString());
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                var row = ds.Tables[0].Rows[0];
+                model.DailyRecordID = ID;
+                model.GuestID = Convert.ToInt16(row["GuestID"]);
+                model.GuestName = row["GuestName"].ToString();
+                model.RoomNo = row["RoomNo"].ToString();
+                model.BedNo = row["BedNo"].ToString();
+                model.Sex = Convert.ToInt16(row["Sex"]);
+                model.Age = Convert.ToInt16(row["Age"]);
+                model.NurseLevel = row["NurseLevel"].ToString();
+                model.StaffName = row["StaffName"].ToString();
+                model.DailyRecordType = row["DailyRecordType"].ToString();
+                model.ReportPerson = row["ReportPerson"].ToString();
+                model.Remark = row["Remark"].ToString();
+                model.CreateOn = Convert.ToDateTime(row["CreateOn"]);
+            }
+            return model;
         }
         #endregion
 

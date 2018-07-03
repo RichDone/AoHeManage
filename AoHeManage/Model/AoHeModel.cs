@@ -96,6 +96,14 @@ namespace AoHeManage.Model
         public DateTime CreateOn { get; set; }
         public string Remark { get; set; }
         public string ReportPerson { get; set; }
+
+        public string GuestName { get; set; }
+        public string RoomNo { get; set; }
+        public string BedNo { get; set; }
+        public int Sex { get; set; }
+        public string NurseLevel { get; set; }
+        public int Age { get; set; }
+        public string StaffName { get; set; }
     }
     public class StaffEvaluate
     {

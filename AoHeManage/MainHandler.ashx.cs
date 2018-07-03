@@ -612,6 +612,9 @@ namespace AoHeManage
             #region 添加日常记录
             if (action == "AddDailyRecord")
             {
+                var saveflag = context.Request.Params["saveflag"];
+                var dailyRecordID = context.Request.Params["dailyRecordID"];
+
                 var guestID = context.Request.Params["guestID"];
                 var dailyRecordType = context.Request.Params["dailyRecordType"];
                 var createOn = context.Request.Params["createOn"];
@@ -623,8 +626,22 @@ namespace AoHeManage
                 model.DailyRecordType = dailyRecordType;
                 model.Remark = remark;
                 model.ReportPerson = staffNo;
-                var insertResult = dal.AddDailyRecord(model);
-                result = insertResult.ToString();
+
+                int excuteResult = 0;
+                if (saveflag == "add")
+                {
+                    excuteResult = dal.AddDailyRecord(model);
+                }
+                if (saveflag == "edit")
+                {
+                    model.DailyRecordID = Convert.ToInt16(dailyRecordID);
+                    excuteResult = dal.UpdateDailyRecord(model);
+                }
+                result = excuteResult.ToString();
+
+
+                //var insertResult = dal.AddDailyRecord(model);
+                //result = insertResult.ToString();
             }
             #endregion
 
@@ -659,6 +676,24 @@ namespace AoHeManage
                 }
                 result = getRecordPage_DailyRecordInfo(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
                 strWhere = null;
+            }
+            #endregion
+
+            #region 删除日常记录
+            if (action == "DeleteDailyRecord")
+            {
+                var ID = context.Request.Params["ID"];
+                var deleteResult = dal.DeleteDailyRecord(Convert.ToInt16(ID));
+                result = deleteResult.ToString();
+            }
+            #endregion
+
+            #region 根据ID获取活动预约
+            if (action == "GetDailyRecordByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dal.GetDailyRecordByID(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
             }
             #endregion
 
@@ -4375,12 +4410,13 @@ namespace AoHeManage
               + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
               + "<tr class=\"\" >");
             tblHtml.Append("  <th style='width:5%'>序号</th>"
-                           + "<th style='width:10%'>床位号</th>"
-                           + "<th style='width:10%'>姓名</th>"
+                           + "<th style='width:5%'>床位号</th>"
+                           + "<th style='width:8%'>姓名</th>"
                             + "<th style='width:10%'>事件类型</th>"
                            + "<th style='width:10%'>记录日期</th>"
-                           + "<th style='width:10%'>报告人</th>"
+                           + "<th style='width:7%'>报告人</th>"
                            + "<th style='width:45%'>记录详情</th>"
+                           + "<th style='width:10%'>操作</th>"
                            );
             tblHtml.Append("</tr><tbody id=wjtbl>");
             if (dt != null)
@@ -4397,6 +4433,7 @@ namespace AoHeManage
                     tblHtml.Append("<td>" + createOnDate + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i]["StaffName"] + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"EditDailyRecord(" + dt.Rows[i]["DailyRecordID"] + ")\">编辑</a><a class='ml_20' href='javascript:void(0)' onclick=\"DeleteDailyRecord(" + dt.Rows[i]["DailyRecordID"] + ")\">删除</a></td>");
                     tblHtml.Append("</tr>");
                 }
             }

@@ -9,13 +9,22 @@
     <script src="../Script/jquery-1.4.2.min.js"></script>
     <script src="../times/WdatePicker.js"></script>
     <script type="text/javascript">
+        var saveflag = "add";
         $(function () {
-            InitDailyRecordType();
             var nowDate = new Date().ToString("yyyy-MM-dd");
             $("#createOn").val(nowDate);
             //设置iframe高度
             var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
             $("#iframInfo", window.parent.document).height(iframeHeight);
+            var callback = function () {
+                var urlParam = GetQueryString("dailyRecordID");
+                if (urlParam != null && urlParam != "" && urlParam != undefined) {
+                    $("#dailyRecordID").val(urlParam);
+                    saveflag = "edit"
+                    GetDailyRecord(urlParam);
+                }
+            }
+            InitDailyRecordType(callback);
         })
         function FindGuest() {
             var input = $("#chooseGuest").val();
@@ -83,6 +92,7 @@
             $("#chooseGuestList").empty();
         }
         function AddDailyRecord() {
+            var dailyRecordID = $("#dailyRecordID").val();
             var guestID = $("#guestID").val();
             var createOn = $("#createOn").val();
             var dailyRecordType = $("#dailyRecordType").val();
@@ -108,7 +118,7 @@
                     return false;
                 }
             }
-            var querydata = "&staffNo=" + staffNo + "&guestID=" + guestID + "&dailyRecordType=" + dailyRecordType + "&createOn=" + createOn + "&remark=" + remark;
+            var querydata = "&dailyRecordID=" + dailyRecordID + "&staffNo=" + staffNo + "&guestID=" + guestID + "&dailyRecordType=" + dailyRecordType + "&createOn=" + createOn + "&remark=" + remark + "&saveflag=" + saveflag;
             $.ajax(
             {
                 type: "GET",
@@ -128,7 +138,7 @@
                 }
             });
         }
-        function InitDailyRecordType() {
+        function InitDailyRecordType(callback) {
             $("#dailyRecordType").empty();
             var querydata = "&paramType=DailyRecordType";
             $.ajax(
@@ -140,6 +150,9 @@
                success: function (result) {
                    if (result != null && result != "" && result.length > 0) {
                        $("#dailyRecordType").append(result);
+                   }
+                   if (callback) {
+                       callback();
                    }
                }
            });
@@ -191,6 +204,46 @@
             $("#chooseStaff").val(staffName);
             $("#chooseStaffList").empty();
         }
+        function GetDailyRecord(ID) {
+            var querydata = "&ID=" + ID;
+            $.ajax(
+            {
+                type: "GET",
+                url: "../MainHandler.ashx?action=GetDailyRecordByID",
+                dataType: 'json',
+                data: encodeURI(querydata),
+                success: function (result) {
+                    if (result != null && result != "") {
+                        $("#dailyRecordID").val(result.DailyRecordID);
+                        $("#chooseGuest").val(result.GuestName);
+                        $("#guestID").val(result.GuestID);
+                        $("#room_bed_no").val(result.RoomNo + '-' + result.BedNo);
+                        $("#name").val(result.GuestName);
+                        var sex = result.Sex == "0" ? '男' : '女';
+                        $("#sex").val(sex);
+                        $("#nurseLevel").val(result.NurseLevel);
+                        $("#age").val(result.Age);
+                        $("#chooseGuestList").empty();
+
+                        $("#dailyRecordType").val(result.DailyRecordType);
+                        $("#remark").html(result.Remark);
+                        $("#staffNo").val(result.ReportPerson);
+                        $("#chooseStaff").val(result.StaffName);
+                        if (result.CreateOn != null && result.CreateOn != "") {
+                            var createOn = new Date(parseInt(result.CreateOn.substr(6))).ToString("yyyy-MM-dd");
+                            $("#createOn").val(createOn);
+                        }
+                        else {
+                            $("#createOn").val("");
+                        }
+                    }
+                    else {
+                        alert("未查询到数据！");
+                        return false;
+                    }
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -210,6 +263,7 @@
                         </td>
                         <td>
                             <input type="hidden" id="guestID" />
+                            <input type="hidden" id="dailyRecordID"/>
                         </td>
                         <td></td>
                         <td></td>

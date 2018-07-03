@@ -90,6 +90,32 @@
                 }
             });
         }
+        function EditDailyRecord(ID) {
+            window.parent.ChangeIframe('AddDailyRecord', 'dailyRecordID=' + ID);
+        }
+        function DeleteDailyRecord(ID) {
+            if (confirm("确认删除该日常记录吗？")) {
+                var querydata = "&ID=" + ID;
+                $.ajax(
+                {
+                    type: "GET",
+                    url: "../MainHandler.ashx?action=DeleteDailyRecord",
+                    dataType: 'text',
+                    data: encodeURI(querydata),
+                    success: function (result) {
+                        if (result != null && result != "") {
+                            if (parseInt(result) > 0) {
+                                alert("删除日常记录成功！");
+                                getPage(1);
+                            }
+                            else {
+                                alert("删除日常记录异常，请重新操作！");
+                            }
+                        }
+                    }
+                });
+            }
+        }
     </script>
 </head>
 <body>
