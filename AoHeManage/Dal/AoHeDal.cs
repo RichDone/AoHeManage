@@ -53,7 +53,9 @@ namespace AoHeManage.Dal
             //strSql.AppendLine(" select COUNT(1) into @totalrow from accidentinfo; ");
             //strSql.AppendLine(" set @totalpage=ceiling(1.0*@totalrow/@pagesize); ");
             //strSql.AppendLine(" select @totalrow as totalrow,@totalpage as totalpage; ");
-            strSql.AppendLine("  select COUNT(1) as totalrow from accidentinfo;  ");
+            strSql.AppendLine("  select COUNT(1) as totalrow from accidentinfo a ");
+            strSql.AppendLine(" left join guestinfo b on a.GuestID = b.ID ");
+            strSql.AppendFormat(" where 1=1 {0} ; ",strWhere);
             strSql.AppendLine(" select a.AccidentID,b.RoomNo,b.BedNo,b.Name,b.Sex,b.Age,b.NurseLevel,a.CreateOn,a.AccidentType,a.Place,a.Condition,a.Remark  ");
             strSql.AppendLine(" from accidentinfo a ");
             strSql.AppendLine(" left join guestinfo b on a.GuestID = b.ID ");
@@ -185,13 +187,13 @@ namespace AoHeManage.Dal
             StringBuilder strSql = new StringBuilder();
             strSql.AppendLine(" select count(1) as totalrow from ( ");
             strSql.AppendLine(" select c.`Name`,c.Age,c.Sex,c.RoomNo,c.BedNo,a.AccidentType,count(1) as OccurCount from accidentinfo a ");
-            strSql.AppendLine(" inner join guestinfo c on a.GuestID = c.ID ");
+            strSql.AppendFormat(" inner join guestinfo c on a.GuestID = c.ID where 1=1 {0} ", strWhere);
             strSql.AppendLine(" group by c.`Name`,c.Age,c.Sex,c.RoomNo,c.BedNo,a.AccidentType ) tempa; ");
 
-            strSql.AppendLine(" select c.`Name`,c.Age,c.Sex,c.RoomNo,c.BedNo,a.AccidentType,count(1) as OccurCount from accidentinfo a ");
+            strSql.AppendLine("select c.`Name`,c.Age,c.Sex,c.RoomNo,c.BedNo,a.AccidentType,count(1) as OccurCount from accidentinfo a ");
             strSql.AppendLine(" inner join guestinfo c on a.GuestID = c.ID ");
             strSql.AppendFormat(" where 1=1 {0} ", strWhere);
-            strSql.AppendLine(" group by c.`Name`,c.Age,c.Sex,c.RoomNo,c.BedNo,a.AccidentType  ");
+            strSql.AppendLine(" group by c.`Name`,c.Age,c.Sex,c.RoomNo,c.BedNo,a.AccidentType ");
 
             if (filedOrder.Trim() != "")
             {

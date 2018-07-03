@@ -4715,7 +4715,7 @@ namespace AoHeManage
         {
             StringBuilder dataPage = new StringBuilder();
 
-            string sortname = " c.Name,OccurCount ";
+            string sortname = " OccurCount desc ";
             DataSet ds = dal.GetAccidentStats(currentpage, pagesize, where, sortname + sorttype);
             int totalrow = 0;
             int totalpage = 0;
