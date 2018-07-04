@@ -733,9 +733,6 @@ namespace AoHeManage
                     excuteResult = dal.UpdateStaffEvaluate(model);
                 }
                 result = excuteResult.ToString();
-
-                //var insertResult = dal.AddStaffEvaluate(model);
-                //result = insertResult.ToString();
             }
             #endregion
 
