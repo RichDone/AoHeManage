@@ -721,7 +721,7 @@ namespace AoHeManage
                 model.CreateOn = Convert.ToDateTime(createOn);
                 model.EvaluateType = Convert.ToInt16(evaluateType);
                 model.Remark = remark;
-
+                //have a try for git ignore
                 int excuteResult = 0;
                 if (saveflag == "add")
                 {
