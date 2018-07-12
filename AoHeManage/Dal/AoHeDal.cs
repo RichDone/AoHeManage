@@ -2941,7 +2941,6 @@ namespace AoHeManage.Dal
         public int AddProduct(Product model)
         {
             StringBuilder strSql = new StringBuilder();
-
             strSql.AppendLine(" insert into product(ID,ProductNo,ProductTypeID,ProductName,Remark,Status) values ");
             strSql.AppendFormat(" (null,'{0}','{1}','{2}','{3}','{4}' ) ",
                 model.ProductNo, model.ProductTypeID, model.ProductName, model.Remark, model.Status);
@@ -3734,6 +3733,7 @@ namespace AoHeManage.Dal
             return DbHelperSQL.Query(strSql.ToString());
         }
         #endregion
+
 
     }
 }

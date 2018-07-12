@@ -3562,7 +3562,10 @@ namespace AoHeManage
                 int excuteResult = 0;
                 if (saveflag == "add")
                 {
-                    excuteResult = dal.AddProduct(model);
+                    //excuteResult = dal.AddProduct(model);
+
+                    excuteResult = new AoHeDalGlobal().Insert_Factory(model);
+
                 }
                 if (saveflag == "edit")
                 {
@@ -3577,7 +3580,10 @@ namespace AoHeManage
             if (action == "GetProductByID")
             {
                 var ID = context.Request.Params["ID"];
-                var staff = dal.GetProductByID(Convert.ToInt16(ID));
+                //var staff = dal.GetProductByID(Convert.ToInt16(ID));
+
+                var staff = new AoHeDalGlobal().GetModel_Factory<Product>(Convert.ToInt16(ID));
+
                 result = CommTools.ObjectToJson(staff);
             }
             #endregion

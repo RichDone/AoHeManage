@@ -8,7 +8,7 @@ using System.IO;
 
 namespace AoHeManage.Common
 {
-    public class CommTools
+    public static class CommTools
     {
         /// <summary>
         /// 获取导航链接
@@ -153,10 +153,118 @@ namespace AoHeManage.Common
             return str;
         }
 
-        //public static string CheckReasonSchedual_a = System.Configuration.ConfigurationManager.AppSettings["CheckReasonSchedual_a"].ToString();
-        //public static string CheckReasonSchedual_b = System.Configuration.ConfigurationManager.AppSettings["CheckReasonSchedual_b"].ToString();
-        //public static string CheckReasonSchedual_c = System.Configuration.ConfigurationManager.AppSettings["CheckReasonSchedual_c"].ToString();
-        //public static string CheckReasonSchedual_d = System.Configuration.ConfigurationManager.AppSettings["CheckReasonSchedual_d"].ToString();
-        //public static string CheckReasonSchedual_e = System.Configuration.ConfigurationManager.AppSettings["CheckReasonSchedual_e"].ToString();
+        public static T ToType<T>(this object value)
+        {
+            if (value == null || value == DBNull.Value)
+            {
+                return default(T);
+            }
+            try
+            {
+                Type type = typeof(T);
+                return (T)GetValue(value, type);
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
+
+        public static object ToType(this object value, string typeName)
+        {
+            if (value == null || value == DBNull.Value)
+            {
+                return null;
+            }
+            try
+            {
+                switch (typeName)
+                {
+                    case "String":
+                        return Convert.ToString(value);
+                    case "Int16":
+                        return Convert.ToInt16(value);
+                    case "Int32":
+                        return Convert.ToInt32(value);
+                    case "Int64":
+                        return Convert.ToInt64(value);
+                    case "Boolean":
+                        try
+                        {
+                            //字符串的"true"和"false"都可转换(无论大小写)，字符串的"1"无法转换为true，字符串的"0"无法转换为false
+                            if (Convert.ToString(value) == "1")
+                            {
+                                return true;
+                            }
+                            if (Convert.ToString(value) == "0")
+                            {
+                                return false;
+                            }
+                            return Convert.ToBoolean(value);
+                        }
+                        catch
+                        {
+                            return false;
+                        }
+                    case "Byte":
+                        return Convert.ToByte(value);
+                    case "Decimal":
+                        return Convert.ToDecimal(value);
+                    case "Double":
+                        return Convert.ToDouble(value);
+                    case "DateTime":
+                        return Convert.ToDateTime(value);
+                    default:
+                        return value;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static object GetValue(object value, Type type)
+        {
+            switch (type.Name)
+            {
+                case "String":
+                    return Convert.ToString(value);
+                case "Int16":
+                    return Convert.ToInt16(value);
+                case "Int32":
+                    return Convert.ToInt32(value);
+                case "Int64":
+                    return Convert.ToInt64(value);
+                case "Boolean":
+                    try
+                    {
+                        //字符串的"true"和"false"都可转换(无论大小写)，字符串的"1"无法转换为true，字符串的"0"无法转换为false
+                        if (Convert.ToString(value) == "1")
+                        {
+                            return true;
+                        }
+                        if (Convert.ToString(value) == "0")
+                        {
+                            return false;
+                        }
+                        return Convert.ToBoolean(value);
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                case "Byte":
+                    return Convert.ToByte(value);
+                case "Decimal":
+                    return Convert.ToDecimal(value);
+                case "Double":
+                    return Convert.ToDouble(value);
+                case "DateTime":
+                    return Convert.ToDateTime(value);
+                default:
+                    return value;
+            }
+        }
     }
 }

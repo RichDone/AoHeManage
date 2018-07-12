@@ -192,6 +192,7 @@
     <Compile Include="Common\CommTools.cs" />
     <Compile Include="Common\DbHelperSQL.cs" />
     <Compile Include="Dal\AoHeDal.cs" />
+    <Compile Include="Dal\AoHeDalGlobal.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
