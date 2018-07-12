@@ -14,6 +14,13 @@ namespace AoHeManage.Dal
     public class AoHeDalGlobal : AoHeFactory
     {
         public static string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DbConn"].ToString();
+
+        /// <summary>
+        /// 使用反射获取数据模型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         public T GetModel_Factory<T>(int ID)
         {
             Type type = typeof(T);
@@ -42,6 +49,12 @@ namespace AoHeManage.Dal
             return model;
         }
 
+        /// <summary>
+        /// 使用反射插入数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public int Insert_Factory<T>(T t)
         {
             StringBuilder strSql_Column = new StringBuilder();
