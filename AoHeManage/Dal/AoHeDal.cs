@@ -3734,6 +3734,32 @@ namespace AoHeManage.Dal
         }
         #endregion
 
+        #region 物料维护
+        public DataSet GetMaterielList(int currentPage, int pageSize, string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select COUNT(1) as totalrow from materiel a ");
+            strSql.AppendLine(" inner join materieltype b on a.MaterielTypeID=b.ID ");
+            strSql.AppendLine(" left join supplier c on a.SupplierID=c.ID ");
+            strSql.AppendFormat(" where 1=1 {0} ; ", strWhere);
 
+            strSql.AppendLine(" select a.*,b.TypeName,c.Name as SupplierName from materiel a ");
+            strSql.AppendLine(" inner join materieltype b on a.MaterielTypeID=b.ID ");
+            strSql.AppendLine(" left join supplier c on a.SupplierID=c.ID ");
+            strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+            MySqlParameter[] parameters = {
+                        new MySqlParameter("@currentpage", MySqlDbType.Int16),
+                        new MySqlParameter("@pagesize", MySqlDbType.Int16)
+                        };
+            parameters[0].Value = currentPage;
+            parameters[1].Value = pageSize;
+            return DbHelperSQL.Query(strSql.ToString(), parameters);
+        }
+        #endregion
     }
 }

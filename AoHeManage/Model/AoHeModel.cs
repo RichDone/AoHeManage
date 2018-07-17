@@ -552,17 +552,13 @@ namespace AoHeManage.Model
             set { _id = value; }
             get { return _id; }
         }
-        /// <summary>
-        /// 
-        /// </summary>
+        [Custom(Exists = true)]
         public string ShortName
         {
             set { _shortname = value; }
             get { return _shortname; }
         }
-        /// <summary>
-        /// 
-        /// </summary>
+        [Custom(Exists = true)]
         public string Name
         {
             set { _name = value; }
@@ -640,9 +636,7 @@ namespace AoHeManage.Model
             set { _materieltypeid = value; }
             get { return _materieltypeid; }
         }
-        /// <summary>
-        /// 
-        /// </summary>
+        [Custom(Exists = true)]
         public string MaterielNo
         {
             set { _materielno = value; }
@@ -656,9 +650,7 @@ namespace AoHeManage.Model
             set { _isconsumable = value; }
             get { return _isconsumable; }
         }
-        /// <summary>
-        /// 
-        /// </summary>
+        [Custom(Exists = true)]
         public string Name
         {
             set { _name = value; }

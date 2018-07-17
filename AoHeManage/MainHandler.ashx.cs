@@ -4370,7 +4370,7 @@ namespace AoHeManage
                 MaterielType model = new MaterielType();
                 model.TypeNo = typeNo;
                 model.TypeName = typeName;
-                model.Remark = remark;
+                model.Remark = remark;   
                 string excuteResult = string.Empty;
                 if (saveflag == "add")
                 {
@@ -4406,6 +4406,213 @@ namespace AoHeManage
             {
                 var ID = context.Request.Params["ID"];
                 var staff = dalGlobal.GetModel_Factory<MaterielType>(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
+            #region 获取供应商列表
+            if (action == "getRecordPage_Supplier")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string queryName = context.Request.Params["queryName"];
+                if (!string.IsNullOrWhiteSpace(queryName))
+                {
+                    strWhere.AppendFormat(" and Name like '%{0}%' ", queryName);
+                }
+                result = getRecordPage_Supplier(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 保存供应商
+            if (action == "SaveSupplier")
+            {
+                var saveflag = context.Request.Params["saveflag"];
+                var ID = context.Request.Params["ID"];
+                var shortName = context.Request.Params["shortName"];
+                var name = context.Request.Params["name"];
+                var contactName = context.Request.Params["contactName"];
+                var phone = context.Request.Params["phone"];
+                var status = context.Request.Params["status"];
+                var address = context.Request.Params["address"];
+                var remark = context.Request.Params["remark"];
+                Supplier model = new Supplier();
+                model.ShortName = shortName;
+                model.Name = name;
+                model.ContactName = contactName;
+                model.Phone = phone;
+                model.Status = Convert.ToInt16(status);
+                model.Address = address;
+                model.Remark = remark;
+                string excuteResult = string.Empty;
+                if (saveflag == "add")
+                {
+                    var existsResult = dalGlobal.Exists_Factory<Supplier>(model);
+                    if (existsResult)
+                    {
+                        excuteResult = "exists";
+                    }
+                    else
+                    {
+                        excuteResult = dalGlobal.Insert_Factory<Supplier>(model).ToString();
+                    }
+                }
+                if (saveflag == "edit")
+                {
+                    model.ID = Convert.ToInt16(ID);
+                    var existsResult = dalGlobal.Exists_Factory<Supplier>(model);
+                    if (existsResult)
+                    {
+                        excuteResult = "exists";
+                    }
+                    else
+                    {
+                        excuteResult = dalGlobal.Update_Factory<Supplier>(model).ToString();
+                    }
+                }
+                result = excuteResult.ToString();
+            }
+            #endregion
+
+            #region 根据ID获取供应商
+            if (action == "GetSupplierByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dalGlobal.GetModel_Factory<Supplier>(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
+            #region 绑定物料类型下拉框
+            if (action == "InitSelect_MaterielType")
+            {
+                DataSet ds = new DataSet();
+                ds = dalGlobal.GetRecord<MaterielType>("");
+                StringBuilder strOpt = new StringBuilder();
+                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    strOpt.Append("<option value=''>请选择</option>");
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        strOpt.AppendFormat("<option value='{0}'>{1}</option>", ds.Tables[0].Rows[i]["ID"],
+                            ds.Tables[0].Rows[i]["TypeName"]);
+                    }
+                }
+                result = strOpt.ToString();
+            }
+            #endregion
+
+            #region 绑定供应商下拉框
+            if (action == "InitSelect_Supplier")
+            {
+                DataSet ds = new DataSet();
+                ds = dalGlobal.GetRecord<Supplier>("");
+                StringBuilder strOpt = new StringBuilder();
+                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    strOpt.Append("<option value=''>请选择</option>");
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        strOpt.AppendFormat("<option value='{0}'>{1}</option>", ds.Tables[0].Rows[i]["ID"],
+                            ds.Tables[0].Rows[i]["Name"]);
+                    }
+                }
+                result = strOpt.ToString();
+            }
+            #endregion
+
+            #region 获取物料列表
+            if (action == "getRecordPage_Materiel")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string queryName = context.Request.Params["queryName"];
+                if (!string.IsNullOrWhiteSpace(queryName))
+                {
+                    strWhere.AppendFormat(" and a.Name like '%{0}%' ", queryName);
+                }
+                result = getRecordPage_Materiel(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 保存物料
+            if (action == "SaveMateriel")
+            {
+                var saveflag = context.Request.Params["saveflag"];
+                var ID = context.Request.Params["ID"];
+                var materielTypeID = context.Request.Params["materielTypeID"];
+                var materielNo = context.Request.Params["materielNo"];
+                var isConsumable = context.Request.Params["isConsumable"];
+                var name = context.Request.Params["name"];
+                var status = context.Request.Params["status"];
+                var supplierID = context.Request.Params["supplierID"];
+                var price = context.Request.Params["price"];
+                var unit = context.Request.Params["unit"];
+                var beginDate = context.Request.Params["beginDate"];
+                var endDate = context.Request.Params["endDate"];
+                var remark = context.Request.Params["remark"];
+                Materiel model = new Materiel();
+                model.MaterielTypeID = Convert.ToInt16(materielTypeID); ;
+                model.MaterielNo = materielNo;
+                model.IsConsumable = Convert.ToInt16(isConsumable);
+                model.Name = name;
+                model.SupplierID = Convert.ToInt16(supplierID);
+                model.Price = Convert.ToDecimal(price);
+                model.Unit = unit;
+                if (!string.IsNullOrWhiteSpace(beginDate))
+                {
+                    model.BeginDate = Convert.ToDateTime(beginDate);
+                }
+                if (!string.IsNullOrWhiteSpace(endDate))
+                {
+                    model.EndDate = Convert.ToDateTime(endDate);
+                }
+                
+                model.Status = Convert.ToInt16(status);
+                model.Remark = remark;
+                string excuteResult = string.Empty;
+                if (saveflag == "add")
+                {
+                    var existsResult = dalGlobal.Exists_Factory<Materiel>(model);
+                    if (existsResult)
+                    {
+                        excuteResult = "exists";
+                    }
+                    else
+                    {
+                        excuteResult = dalGlobal.Insert_Factory<Materiel>(model).ToString();
+                    }
+                }
+                if (saveflag == "edit")
+                {
+                    model.ID = Convert.ToInt16(ID);
+                    var existsResult = dalGlobal.Exists_Factory<Materiel>(model);
+                    if (existsResult)
+                    {
+                        excuteResult = "exists";
+                    }
+                    else
+                    {
+                        excuteResult = dalGlobal.Update_Factory<Materiel>(model).ToString();
+                    }
+                }
+                result = excuteResult.ToString();
+            }
+            #endregion
+
+            #region 根据ID获取物料
+            if (action == "GetMaterielByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dalGlobal.GetModel_Factory<Materiel>(Convert.ToInt16(ID));
                 result = CommTools.ObjectToJson(staff);
             }
             #endregion
@@ -6933,7 +7140,7 @@ namespace AoHeManage
         {
             StringBuilder dataPage = new StringBuilder();
             string sortname = " a.ID ";
-            DataSet ds = dalGlobal.GetRecordPage<MaterielType>(currentpage, pagesize, where, sortname + sorttype);
+            DataSet ds = dalGlobal.GetPageingRecord<MaterielType>(currentpage, pagesize, where, sortname + sorttype);
             int totalrow = 0;
             int totalpage = 0;
             if (ds != null)
@@ -6971,6 +7178,124 @@ namespace AoHeManage
                     tblHtml.Append("<td>" + dt.Rows[i]["TypeNo"] + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i]["TypeName"] + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">编辑</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 供应商列表
+        private string getRecordPage_Supplier(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            DataSet ds = dalGlobal.GetPageingRecord<Supplier>(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_Supplier(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_Supplier(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:20%'>供应商简写</th>"
+                           + "<th style='width:20%'>供应商名称</th>"
+                           + "<th style='width:20%'>联系人</th>"
+                           + "<th style='width:20%'>联系电话</th>"
+                           + "<th style='width:10%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["ShortName"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Name"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["ContactName"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Phone"] + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">编辑</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 物料列表
+        private string getRecordPage_Materiel(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            DataSet ds = dal.GetMaterielList(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_Materiel(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_Materiel(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:10%'>物料类型</th>"
+                           + "<th style='width:10%'>物料编号</th>"
+                           + "<th style='width:20%'>名称</th>"
+                           + "<th style='width:10%'>是否消耗品</th>"
+                           + "<th style='width:10%'>供应商</th>"
+                           + "<th style='width:10%'>价格</th>"
+                           + "<th style='width:10%'>状态</th>"
+                           + "<th style='width:10%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["TypeName"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["MaterielNo"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Name"] + "</td>");
+                    var isConsumable = ((dt.Rows[i]["IsConsumable"].ToString() == "0") ? "否" : "是");
+                    tblHtml.Append("<td>" + isConsumable + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["SupplierName"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Price"] + "</td>");
+                    var status = ((dt.Rows[i]["Status"].ToString() == "0") ? "无效" : "有效");
+                    tblHtml.Append("<td>" + status + "</td>");
                     tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">编辑</a></td>");
                     tblHtml.Append("</tr>");
                 }

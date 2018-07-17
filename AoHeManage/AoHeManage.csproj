@@ -155,6 +155,7 @@
     <Content Include="SubPage\GuestConnection.html" />
     <Content Include="SubPage\GuestEvaluate.html" />
     <Content Include="SubPage\GuestNursePlan.html" />
+    <Content Include="SubPage\Materiel.html" />
     <Content Include="SubPage\MaterielType.html" />
     <Content Include="SubPage\NurseProject.html" />
     <Content Include="SubPage\OtherWorkTime.html" />
@@ -182,6 +183,7 @@
     <Content Include="SubPage\StaffManage.html" />
     <Content Include="SubPage\Guest.html" />
     <Content Include="SubPage\StaffTransfer.html" />
+    <Content Include="SubPage\Supplier.html" />
     <Content Include="times\calendar.js" />
     <Content Include="times\lang\en.js" />
     <Content Include="times\lang\zh-cn.js" />

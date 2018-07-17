@@ -15,7 +15,16 @@ namespace AoHeManage.Dal
     {
         public static string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DbConn"].ToString();
 
-        public DataSet GetRecordPage<T>(int currentPage, int pageSize, string strWhere, string filedOrder)
+        /// <summary>
+        /// 利用反射分页获取数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="currentPage"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="strWhere"></param>
+        /// <param name="filedOrder"></param>
+        /// <returns></returns>
+        public DataSet GetPageingRecord<T>(int currentPage, int pageSize, string strWhere, string filedOrder)
         {
             StringBuilder strSql = new StringBuilder();
             strSql.AppendFormat("  select COUNT(1) as totalrow from {0};  ", typeof(T).Name);
@@ -26,6 +35,14 @@ namespace AoHeManage.Dal
                 strSql.Append(" order by " + filedOrder);
             }
             strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+
+        public DataSet GetRecord<T>(string strWhere)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" select a.* from {0} a ", typeof(T).Name);
+            strSql.AppendFormat(" where 1=1 {0} ", strWhere);
             return DbHelperSQL.Query(strSql.ToString());
         }
 
@@ -109,14 +126,27 @@ namespace AoHeManage.Dal
                     CustomAttribute getAttribute = item.GetCustomAttribute(typeof(CustomAttribute)) as CustomAttribute;
                     if (getAttribute == null || !getAttribute.NoUpdate)
                     {
-                        strSql_Column.AppendFormat(",{0}='{1}' ", item.Name, item.GetValue(t));
+                        var value = item.GetValue(t);
+                        if (value == null)
+                        {
+                            strSql_Column.AppendFormat(",{0}=null ", item.Name);
+                        }
+                        else
+                        {
+                            strSql_Column.AppendFormat(",{0}='{1}' ", item.Name, item.GetValue(t));
+                        }
                     }
                 }
             }
             string strSql = string.Format(" update {0} set {1} where {2} ; ", type.Name, strSql_Column.Remove(0, 1).ToString(), strSql_Where.ToString());
             return DbHelperSQL.ExecuteSql(strSql);
         }
-
+        /// <summary>
+        /// 使用反射检查是否存在，Insert and Update
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public bool Exists_Factory<T>(T t)
         {
             StringBuilder strSql_Where = new StringBuilder();

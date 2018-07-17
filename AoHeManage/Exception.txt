@@ -1,1 +1,30 @@
-﻿
+﻿2018-07-17 18:40:05
+Global捕获到未处理异常：MySql.Data.MySqlClient.MySqlException
+异常信息：Field 'ID' doesn't have a default value
+异常堆栈：   在 AoHeManage.Common.DbHelperSQL.ExecuteSql(String SQLString) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\Common\DbHelperSQL.cs:行号 130
+   在 AoHeManage.Dal.AoHeDalGlobal.Insert_Factory[T](T t) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\Dal\AoHeDalGlobal.cs:行号 104
+   在 AoHeManage.MainHandler.ProcessRequest(HttpContext context) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\MainHandler.ashx.cs:行号 4584
+   在 System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   在 System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   在 System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+
+2018-07-17 18:44:54
+Global捕获到未处理异常：MySql.Data.MySqlClient.MySqlException
+异常信息：Incorrect datetime value: '' for column 'BeginDate' at row 1
+异常堆栈：   在 AoHeManage.Common.DbHelperSQL.ExecuteSql(String SQLString) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\Common\DbHelperSQL.cs:行号 130
+   在 AoHeManage.Dal.AoHeDalGlobal.Update_Factory[T](T t) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\Dal\AoHeDalGlobal.cs:行号 134
+   在 AoHeManage.MainHandler.ProcessRequest(HttpContext context) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\MainHandler.ashx.cs:行号 4604
+   在 System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   在 System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   在 System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+
+2018-07-17 18:46:21
+Global捕获到未处理异常：MySql.Data.MySqlClient.MySqlException
+异常信息：Incorrect datetime value: '' for column 'BeginDate' at row 1
+异常堆栈：   在 AoHeManage.Common.DbHelperSQL.ExecuteSql(String SQLString) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\Common\DbHelperSQL.cs:行号 130
+   在 AoHeManage.Dal.AoHeDalGlobal.Update_Factory[T](T t) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\Dal\AoHeDalGlobal.cs:行号 134
+   在 AoHeManage.MainHandler.ProcessRequest(HttpContext context) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\MainHandler.ashx.cs:行号 4604
+   在 System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   在 System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   在 System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+
