@@ -493,4 +493,233 @@ namespace AoHeManage.Model
         public int PayStatus { get; set; }
         public string Participation { get; set; }
     }
+
+    public class MaterielType
+    {
+        private int _id;
+        private string _typeno;
+        private string _typename;
+        private string _remark;
+        /// <summary>
+        /// auto_increment
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        [Custom(Exists = true)]
+        public string TypeNo
+        {
+            set { _typeno = value; }
+            get { return _typeno; }
+        }
+
+        [Custom(Exists = true)]
+        public string TypeName
+        {
+            set { _typename = value; }
+            get { return _typename; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+    }
+
+    public class Supplier
+    {
+        private int _id;
+        private string _shortname;
+        private string _name;
+        private string _contactname;
+        private string _phone;
+        private string _address;
+        private string _remark;
+        private int _status;
+        /// <summary>
+        /// auto_increment
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ShortName
+        {
+            set { _shortname = value; }
+            get { return _shortname; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Name
+        {
+            set { _name = value; }
+            get { return _name; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ContactName
+        {
+            set { _contactname = value; }
+            get { return _contactname; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Phone
+        {
+            set { _phone = value; }
+            get { return _phone; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Address
+        {
+            set { _address = value; }
+            get { return _address; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Status
+        {
+            set { _status = value; }
+            get { return _status; }
+        }
+    }
+
+    public class Materiel
+    {
+        private int _id;
+        private int _materieltypeid;
+        private string _materielno;
+        private int _isconsumable;
+        private string _name;
+        private int _supplierid;
+        private decimal _price;
+        private string _unit;
+        private DateTime? _begindate;
+        private DateTime? _enddate;
+        private string _remark;
+        private int _status;
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int MaterielTypeID
+        {
+            set { _materieltypeid = value; }
+            get { return _materieltypeid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string MaterielNo
+        {
+            set { _materielno = value; }
+            get { return _materielno; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int IsConsumable
+        {
+            set { _isconsumable = value; }
+            get { return _isconsumable; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Name
+        {
+            set { _name = value; }
+            get { return _name; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int SupplierID
+        {
+            set { _supplierid = value; }
+            get { return _supplierid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal Price
+        {
+            set { _price = value; }
+            get { return _price; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Unit
+        {
+            set { _unit = value; }
+            get { return _unit; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? BeginDate
+        {
+            set { _begindate = value; }
+            get { return _begindate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? EndDate
+        {
+            set { _enddate = value; }
+            get { return _enddate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Status
+        {
+            set { _status = value; }
+            get { return _status; }
+        }
+    }
+
 }

@@ -20,6 +20,7 @@ namespace AoHeManage
     {
         //test svn
         AoHeDal dal = new AoHeDal();
+        AoHeDalGlobal dalGlobal = new AoHeDalGlobal();
         public void ProcessRequest(HttpContext context)
         {
             context.Response.ClearContent();
@@ -4340,6 +4341,75 @@ namespace AoHeManage
             }
             #endregion
 
+            #region 获取物料类型列表
+            if (action == "getRecordPage_MaterielType")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string queryName = context.Request.Params["queryName"];
+                if (!string.IsNullOrWhiteSpace(queryName))
+                {
+                    strWhere.AppendFormat(" and TypeName like '%{0}%' ", queryName);
+                }
+                result = getRecordPage_MaterielType(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 保存物料类型
+            if (action == "SaveMaterielType")
+            {
+                var saveflag = context.Request.Params["saveflag"];
+                var ID = context.Request.Params["ID"];
+                var typeNo = context.Request.Params["typeNo"];
+                var typeName = context.Request.Params["typeName"];
+                var remark = context.Request.Params["remark"];
+                MaterielType model = new MaterielType();
+                model.TypeNo = typeNo;
+                model.TypeName = typeName;
+                model.Remark = remark;
+                string excuteResult = string.Empty;
+                if (saveflag == "add")
+                {
+                    var existsResult = dalGlobal.Exists_Factory<MaterielType>(model);
+                    if (existsResult)
+                    {
+                        excuteResult = "exists";
+                    }
+                    else
+                    {
+                        excuteResult = dalGlobal.Insert_Factory<MaterielType>(model).ToString();
+                    }
+                }
+                if (saveflag == "edit")
+                {
+                    model.ID = Convert.ToInt16(ID);
+                    var existsResult = dalGlobal.Exists_Factory<MaterielType>(model);
+                    if (existsResult)
+                    {
+                        excuteResult = "exists";
+                    }
+                    else
+                    {
+                        excuteResult = dalGlobal.Update_Factory<MaterielType>(model).ToString();
+                    }
+                }
+                result = excuteResult.ToString();
+            }
+            #endregion
+
+            #region 根据ID获取物料类型
+            if (action == "GetMaterielTypeByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dalGlobal.GetModel_Factory<MaterielType>(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
             context.Response.Write(result);
             context.Response.Flush();
             context.Response.End();
@@ -6854,6 +6924,59 @@ namespace AoHeManage
             }
             tblHtml.Append("</tbody></table></div>");
             ds = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 物料类型列表
+        private string getRecordPage_MaterielType(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            DataSet ds = dalGlobal.GetRecordPage<MaterielType>(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_MaterielType(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_MaterielType(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:10%'>物料类型编号</th>"
+                           + "<th style='width:20%'>物料类型名称</th>"
+                           + "<th style='width:40%'>说明</th>"
+                           + "<th style='width:20%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["TypeNo"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["TypeName"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">编辑</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
             return tblHtml.ToString();
         }
         #endregion
