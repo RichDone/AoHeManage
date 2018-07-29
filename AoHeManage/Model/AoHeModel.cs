@@ -714,4 +714,89 @@ namespace AoHeManage.Model
         }
     }
 
+    public class MaterielApply
+    {
+        private int _id;
+        private string _name;
+        private string _unit;
+        private int _quantity;
+        private DateTime _applydate;
+        private string _applydept;
+        private string _applypeople;
+        private int _status;
+        private string _remark;
+        /// <summary>
+        /// auto_increment
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Name
+        {
+            set { _name = value; }
+            get { return _name; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Unit
+        {
+            set { _unit = value; }
+            get { return _unit; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Quantity
+        {
+            set { _quantity = value; }
+            get { return _quantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime ApplyDate
+        {
+            set { _applydate = value; }
+            get { return _applydate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ApplyDept
+        {
+            set { _applydept = value; }
+            get { return _applydept; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ApplyPeople
+        {
+            set { _applypeople = value; }
+            get { return _applypeople; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Status
+        {
+            set { _status = value; }
+            get { return _status; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+    }
+
 }
