@@ -156,6 +156,7 @@
     <Content Include="SubPage\GuestEvaluate.html" />
     <Content Include="SubPage\GuestNursePlan.html" />
     <Content Include="SubPage\Materiel.html" />
+    <Content Include="SubPage\MaterielApply.html" />
     <Content Include="SubPage\MaterielType.html" />
     <Content Include="SubPage\NurseProject.html" />
     <Content Include="SubPage\OtherWorkTime.html" />
@@ -165,6 +166,7 @@
     <Content Include="SubPage\ProductServiceObject.html" />
     <Content Include="SubPage\ProductSkillRequired.html" />
     <Content Include="SubPage\ProductType.html" />
+    <Content Include="SubPage\PurchaseApply.html" />
     <Content Include="SubPage\ReasonableSchedualInfo.html" />
     <Content Include="SubPage\RoomCombine.html" />
     <Content Include="SubPage\RoomManage.html" />

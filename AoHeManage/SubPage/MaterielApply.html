@@ -10,8 +10,6 @@
     <script src="../times/WdatePicker.js"></script>
     <script type="text/javascript">
         $(function () {
-            var applyDate = new Date().ToString("yyyy-MM-dd");
-            $("#applyDate").val(applyDate);
             getPage(1);
             //设置iframe高度
             var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
@@ -75,7 +73,7 @@
             $.ajax(
                 {
                     type: "GET",
-                    url: "../MainHandler.ashx?action=getRecordPage_Materiel",
+                    url: "../MainHandler.ashx?action=getRecordPage_MaterielApply",
                     dataType: 'text',
                     data: encodeURI(querydata),
                     success: function (result) {
@@ -136,6 +134,9 @@
                                 alert("保存申请新物料成功！");
                                 getPage(1);
                             }
+                            else if (result == "exists") {
+                                alert("申请了重复的新物料，请重新操作！");
+                            }
                             else {
                                 alert("保存申请新物料失败，请重新操作！");
                             }
@@ -188,7 +189,8 @@
                 $("#materielApply_add .normalInput").val("");
                 $("#materielApply_add .normalSelect").val("");
                 $("#remark").html("");
-                $("#applyDate").val("");
+                var applyDate = new Date().ToString("yyyy-MM-dd");
+                $("#applyDate").val(applyDate);
             }
             if (saveflag == "edit") {
                 GetMaterielApplyByID(ID);

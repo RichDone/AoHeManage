@@ -4617,6 +4617,172 @@ namespace AoHeManage
             }
             #endregion
 
+            #region 获取申请新物料列表
+            if (action == "getRecordPage_MaterielApply")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string queryName = context.Request.Params["queryName"];
+                if (!string.IsNullOrWhiteSpace(queryName))
+                {
+                    strWhere.AppendFormat(" and a.Name like '%{0}%' ", queryName);
+                }
+                result = getRecordPage_MaterielApply(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 保存申请新物料
+            if (action == "SaveMaterielApply")
+            {
+                var saveflag = context.Request.Params["saveflag"];
+                var ID = context.Request.Params["ID"];
+                var name = context.Request.Params["name"];
+                var quantity = context.Request.Params["quantity"];
+                var unit = context.Request.Params["unit"];
+
+                var applyDate = context.Request.Params["applyDate"];
+                var applyDept = context.Request.Params["applyDept"];
+                var applyPeople = context.Request.Params["applyPeople"];
+
+                var status = context.Request.Params["status"];
+                var remark = context.Request.Params["remark"];
+                MaterielApply model = new MaterielApply();
+                model.Quantity = Convert.ToInt16(quantity); ;
+                model.Name = name;
+                model.Unit =unit;
+                model.ApplyDate = Convert.ToDateTime(applyDate);
+                model.ApplyDept = applyDept;
+                model.ApplyPeople = applyPeople;
+                model.Status = Convert.ToInt16(status);
+                model.Remark = remark;
+                string excuteResult = string.Empty;
+                if (saveflag == "add")
+                {
+                    var existsResult = dalGlobal.Exists_Factory<MaterielApply>(model);
+                    if (existsResult)
+                    {
+                        excuteResult = "exists";
+                    }
+                    else
+                    {
+                        excuteResult = dalGlobal.Insert_Factory<MaterielApply>(model).ToString();
+                    }
+                }
+                if (saveflag == "edit")
+                {
+                    model.ID = Convert.ToInt16(ID);
+                    var existsResult = dalGlobal.Exists_Factory<MaterielApply>(model);
+                    if (existsResult)
+                    {
+                        excuteResult = "exists";
+                    }
+                    else
+                    {
+                        excuteResult = dalGlobal.Update_Factory<MaterielApply>(model).ToString();
+                    }
+                }
+                result = excuteResult.ToString();
+            }
+            #endregion
+
+            #region 根据ID获取申请新物料
+            if (action == "GetMaterielApplyByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dalGlobal.GetModel_Factory<MaterielApply>(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
+            #region 绑定物料下拉框
+            if (action == "InitSelect_Materiel")
+            {
+                DataSet ds = new DataSet();
+                ds = dalGlobal.GetRecord<Materiel>("");
+                StringBuilder strOpt = new StringBuilder();
+                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    strOpt.Append("<option value=''>请选择</option>");
+                    for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                    {
+                        strOpt.AppendFormat("<option Unit='{2}' Price='{3}' value='{0}'>{1}</option>", ds.Tables[0].Rows[i]["ID"],
+                            ds.Tables[0].Rows[i]["Name"], ds.Tables[0].Rows[i]["Unit"], ds.Tables[0].Rows[i]["Price"]);
+                    }
+                }
+                result = strOpt.ToString();
+            }
+            #endregion
+            
+            #region 获取采购申请列表
+            if (action == "getRecordPage_PurchaseApply")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string quaryName = context.Request.Params["quaryName"];
+                if (!string.IsNullOrWhiteSpace(quaryName))
+                {
+                    strWhere.AppendFormat(" and a.ApplyPeople like '%{0}%' ", quaryName);
+                }
+                result = getRecordPage_PurchaseApply(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 根据ID获取采购申请
+            if (action == "GetPurchaseApplyByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dal.GetPurchaseApplyByID(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
+            #region 保存采购申请
+            if (action == "SavePurchaseApply")
+            {
+                var saveflag = context.Request.Params["saveflag"];
+                var ID = context.Request.Params["ID"];
+                var applyDept = context.Request.Params["applyDept"];
+                var applyPeople = context.Request.Params["applyPeople"];
+                var applyDate = context.Request.Params["applyDate"];
+                var status = context.Request.Params["status"];
+                var remark = context.Request.Params["remark"];
+                var details = context.Request.Params["details"];
+                List<PurchaseApplyDetail> listPurchaseApplyDetail = new List<PurchaseApplyDetail>();
+                if (!string.IsNullOrWhiteSpace(details))
+                {
+                    listPurchaseApplyDetail = CommTools.JsonToObject(details, typeof(List<PurchaseApplyDetail>)) as List<PurchaseApplyDetail>;
+                }
+                PurchaseApply model = new PurchaseApply();
+                model.ApplyDept = applyDept;
+                model.ApplyPeople = applyPeople;
+                model.ApplyDate = Convert.ToDateTime(applyDate);
+                model.Remark = remark;
+                model.Status = Convert.ToInt16(status);
+                model.ListPurchaseApplyDetail = listPurchaseApplyDetail;
+                model.TotalPrice = listPurchaseApplyDetail.Sum(p => p.RequirePrice);
+                string excuteResult = string.Empty;
+                if (saveflag == "add")
+                {
+                    excuteResult = dal.AddPurchaseApply(model).ToString();
+                }
+                if (saveflag == "edit")
+                {
+                    model.ID = Convert.ToInt16(ID);
+                    excuteResult = dal.UpdatePurchaseApply(model).ToString();
+                }
+                result = excuteResult;
+            }
+            #endregion
+
+
             context.Response.Write(result);
             context.Response.Flush();
             context.Response.End();
@@ -7296,6 +7462,127 @@ namespace AoHeManage
                     tblHtml.Append("<td>" + dt.Rows[i]["Price"] + "</td>");
                     var status = ((dt.Rows[i]["Status"].ToString() == "0") ? "无效" : "有效");
                     tblHtml.Append("<td>" + status + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">编辑</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 申请新物料列表
+        private string getRecordPage_MaterielApply(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            DataSet ds = dalGlobal.GetPageingRecord<MaterielApply>(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_MaterielApply(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_MaterielApply(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:20%'>物料名称</th>"
+                           + "<th style='width:10%'>申请部门</th>"
+                           + "<th style='width:20%'>申请日期</th>"
+                           + "<th style='width:10%'>申请人</th>"
+                           + "<th style='width:10%'>数量</th>"
+                           + "<th style='width:10%'>状态</th>"
+                           + "<th style='width:10%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Name"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["ApplyDept"] + "</td>");
+                    tblHtml.Append("<td>" +(Convert.ToDateTime( dt.Rows[i]["ApplyDate"]).ToString("yyyy-MM-dd")) + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["ApplyPeople"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Quantity"] + "</td>");
+                    var status = ((dt.Rows[i]["Status"].ToString() == "0") ? "处理中" : (dt.Rows[i]["Status"].ToString() == "1") ? "申请完成" : "申请驳回");
+                    tblHtml.Append("<td>" + status + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">编辑</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 采购申请列表
+        private string getRecordPage_PurchaseApply(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            DataSet ds = dalGlobal.GetPageingRecord<PurchaseApply>(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_PurchaseApply(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_PurchaseApply(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:10%'>申请部门</th>"
+                           + "<th style='width:10%'>申请人</th>"
+                           + "<th style='width:15%'>申请日期</th>"
+                           + "<th style='width:10%'>状态</th>"
+                           + "<th style='width:10%'>总金额</th>"
+                           + "<th style='width:20%'>申请说明</th>"
+                           + "<th style='width:15%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["ApplyDept"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["ApplyPeople"] + "</td>");
+                    tblHtml.Append("<td>" + (Convert.ToDateTime(dt.Rows[i]["ApplyDate"]).ToString("yyyy-MM-dd")) + "</td>");
+                    var statusCode = dt.Rows[i]["Status"].ToString();
+                    var status = ((statusCode == "0") ? "申请中" : (statusCode == "1") ? "申请完成" : (statusCode == "2") ? "处理中" : "申请驳回");
+                    tblHtml.Append("<td>" + status + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["TotalPrice"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
                     tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">编辑</a></td>");
                     tblHtml.Append("</tr>");
                 }

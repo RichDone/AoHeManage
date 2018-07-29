@@ -3761,5 +3761,93 @@ namespace AoHeManage.Dal
             return DbHelperSQL.Query(strSql.ToString(), parameters);
         }
         #endregion
+
+        #region 采购申请信息
+        public int AddPurchaseApply(PurchaseApply model)
+        {
+            List<String> sqlList = new List<string>();
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" insert into purchaseapply(ID,ApplyDept,ApplyPeople,ApplyDate,TotalPrice,Status,Remark) values ");
+            strSql.AppendFormat(" (null,'{0}','{1}','{2}','{3}','{4}','{5}' ); ", model.ApplyDept, model.ApplyPeople, model.ApplyDate, model.TotalPrice, model.Status, model.Remark);
+            sqlList.Add(strSql.ToString());
+            foreach (var item in model.ListPurchaseApplyDetail)
+            {
+                strSql = new StringBuilder();
+                strSql.AppendLine(" insert into purchaseapplydetail(ID,PurchaseApplyID,MaterielID,Unit,Price,RequireQuantity,RequirePrice,PurchaseQuantity,PurchasePrice,StoredQuantity,StoringQuantity,Remark) values ");
+                strSql.AppendFormat(" (null,(select a.ID from (select MAX(ID) as ID from purchaseapply) a),'{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}' ); ",
+                    item.MaterielID, item.Unit, item.Price, item.RequireQuantity, item.RequirePrice, item.PurchaseQuantity, item.PurchasePrice, item.StoredQuantity, item.StoringQuantity, item.Remark);
+                sqlList.Add(strSql.ToString());
+            }
+            return DbHelperSQL.ExecuteSqlTran(sqlList);
+        }
+
+        public int UpdatePurchaseApply(PurchaseApply model)
+        {
+            List<String> sqlList = new List<string>();
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" update purchaseapply set ApplyDept='{0}',ApplyPeople='{1}',ApplyDate='{2}',Status='{3}',Remark='{4}',TotalPrice='{5}' ", model.ApplyDept, model.ApplyPeople, model.ApplyDate, model.Status, model.Remark, model.TotalPrice);
+            strSql.AppendFormat(" where ID='{0}'; ", model.ID);
+            sqlList.Add(strSql.ToString());
+            strSql = new StringBuilder();
+            strSql.AppendFormat(" delete from purchaseapplydetail where PurchaseApplyID='{0}'; ", model.ID);
+            sqlList.Add(strSql.ToString());
+            foreach (var item in model.ListPurchaseApplyDetail)
+            {
+                strSql = new StringBuilder();
+                strSql.AppendLine(" insert into purchaseapplydetail(ID,PurchaseApplyID,MaterielID,Unit,Price,RequireQuantity,RequirePrice,PurchaseQuantity,PurchasePrice,StoredQuantity,StoringQuantity,Remark) values ");
+                strSql.AppendFormat(" (null,'{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}' ); ",
+                    model.ID,item.MaterielID, item.Unit, item.Price, item.RequireQuantity, item.RequirePrice, item.PurchaseQuantity, item.PurchasePrice, item.StoredQuantity, item.StoringQuantity, item.Remark);
+                sqlList.Add(strSql.ToString());
+            }
+            return DbHelperSQL.ExecuteSqlTran(sqlList);
+        }
+        public PurchaseApply GetPurchaseApplyByID(int ID)
+        {
+            PurchaseApply model = new PurchaseApply();
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select a.ID,ApplyDept,ApplyPeople,ApplyDate,TotalPrice,Status,a.Remark, ");
+            strSql.AppendLine(" b.ID as DetailID,PurchaseApplyID,MaterielID,Unit,Price,RequireQuantity,RequirePrice,PurchaseQuantity,PurchasePrice,StoredQuantity,StoringQuantity,b.Remark as DetailRemark ");
+            strSql.AppendFormat(" from purchaseapply a left join purchaseapplydetail b on a.ID=b.PurchaseApplyID where a.ID ='{0}' order by b.ID ", ID);
+            DataSet ds = new DataSet();
+            ds = DbHelperSQL.Query(strSql.ToString());
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                var row_0 = ds.Tables[0].Rows[0];
+                model.ID = ID;
+                model.ApplyDept = row_0["ApplyDept"].ToString();
+                model.ApplyPeople = row_0["ApplyPeople"].ToString();
+                model.ApplyDate = Convert.ToDateTime(row_0["ApplyDate"]);
+                model.Status = Convert.ToInt16(row_0["Status"]);
+                model.TotalPrice = Convert.ToDecimal(row_0["TotalPrice"]);
+                model.Remark = row_0["Remark"].ToString();
+                List<PurchaseApplyDetail> details = new List<PurchaseApplyDetail>();
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    var row = ds.Tables[0].Rows[i];
+                    if (row["DetailID"] == DBNull.Value)
+                    {
+                        continue;
+                    }
+                    details.Add(new PurchaseApplyDetail()
+                    {
+                        ID = Convert.ToInt16(row["DetailID"]),
+                        PurchaseApplyID = Convert.ToInt16(row["PurchaseApplyID"]),
+                        MaterielID = Convert.ToInt16(row["MaterielID"]),
+                        Unit = row["Unit"].ToString(),
+                        Price = Convert.ToDecimal(row["Price"]),
+                        RequireQuantity = Convert.ToInt16(row["RequireQuantity"]),
+                        RequirePrice = Convert.ToDecimal(row["RequirePrice"]),
+                        PurchaseQuantity = Convert.ToInt16(row["PurchaseQuantity"]),
+                        PurchasePrice = Convert.ToDecimal(row["PurchasePrice"]),
+                        StoredQuantity = Convert.ToInt16(row["StoredQuantity"]),
+                        StoringQuantity = Convert.ToInt16(row["StoringQuantity"]),
+                        Remark = row["DetailRemark"].ToString()
+                    });
+                }
+                model.ListPurchaseApplyDetail = details;
+            }
+            return model;
+        }
+        #endregion
     }
 }

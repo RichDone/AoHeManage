@@ -736,6 +736,7 @@ namespace AoHeManage.Model
         /// <summary>
         /// 
         /// </summary>
+        [Custom(Exists = true)]
         public string Name
         {
             set { _name = value; }
@@ -797,6 +798,419 @@ namespace AoHeManage.Model
             set { _remark = value; }
             get { return _remark; }
         }
+    }
+
+    public class PurchaseApply
+    {
+        private int _id;
+        private string _applydept;
+        private string _applypeople;
+        private DateTime _applydate;
+        private decimal _totalprice;
+        private int _status;
+        private string _remark;
+
+        public List<PurchaseApplyDetail> ListPurchaseApplyDetail { get; set; }
+        /// <summary>
+        /// auto_increment
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ApplyDept
+        {
+            set { _applydept = value; }
+            get { return _applydept; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ApplyPeople
+        {
+            set { _applypeople = value; }
+            get { return _applypeople; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime ApplyDate
+        {
+            set { _applydate = value; }
+            get { return _applydate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal TotalPrice
+        {
+            set { _totalprice = value; }
+            get { return _totalprice; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Status
+        {
+            set { _status = value; }
+            get { return _status; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+    }
+
+    public class PurchaseApplyDetail
+    {
+        private int _id;
+        private int _purchaseapplyid;
+        private int _materielid;
+        private string _unit;
+        private decimal _price;
+        private int _requirequantity;
+        private decimal _requireprice;
+        private int _purchasequantity;
+        private decimal _purchaseprice;
+        private int _storedquantity;
+        private int _storingquantity;
+        private string _remark;
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int PurchaseApplyID
+        {
+            set { _purchaseapplyid = value; }
+            get { return _purchaseapplyid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int MaterielID
+        {
+            set { _materielid = value; }
+            get { return _materielid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Unit
+        {
+            set { _unit = value; }
+            get { return _unit; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal Price
+        {
+            set { _price = value; }
+            get { return _price; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int RequireQuantity
+        {
+            set { _requirequantity = value; }
+            get { return _requirequantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal RequirePrice
+        {
+            set { _requireprice = value; }
+            get { return _requireprice; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int PurchaseQuantity
+        {
+            set { _purchasequantity = value; }
+            get { return _purchasequantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal PurchasePrice
+        {
+            set { _purchaseprice = value; }
+            get { return _purchaseprice; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int StoredQuantity
+        {
+            set { _storedquantity = value; }
+            get { return _storedquantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int StoringQuantity
+        {
+            set { _storingquantity = value; }
+            get { return _storingquantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+
+    }
+
+    public class StoreManage
+    {
+        private int _id;
+        private int _purchaseapplyid;
+        private int _materielid;
+        private int _storequantity;
+        private decimal _storeprice;
+        private string _storepeople;
+        private DateTime _storedate;
+        private int _status;
+        private string _remark;
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int PurchaseApplyID
+        {
+            set { _purchaseapplyid = value; }
+            get { return _purchaseapplyid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int MaterielID
+        {
+            set { _materielid = value; }
+            get { return _materielid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int StoreQuantity
+        {
+            set { _storequantity = value; }
+            get { return _storequantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal StorePrice
+        {
+            set { _storeprice = value; }
+            get { return _storeprice; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string StorePeople
+        {
+            set { _storepeople = value; }
+            get { return _storepeople; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime StoreDate
+        {
+            set { _storedate = value; }
+            get { return _storedate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Status
+        {
+            set { _status = value; }
+            get { return _status; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+
+    }
+
+    public class MaterielStock
+    {
+        private int _id;
+        private int _materielid;
+        private int _totalstorequantity;
+        private int _usequantity;
+        private int _losequantity;
+        private int _stockquantity;
+        private int _borrowquantity;
+        /// <summary>
+        /// auto_increment
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int MaterielID
+        {
+            set { _materielid = value; }
+            get { return _materielid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int TotalStoreQuantity
+        {
+            set { _totalstorequantity = value; }
+            get { return _totalstorequantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int UseQuantity
+        {
+            set { _usequantity = value; }
+            get { return _usequantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int LoseQuantity
+        {
+            set { _losequantity = value; }
+            get { return _losequantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int StockQuantity
+        {
+            set { _stockquantity = value; }
+            get { return _stockquantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int BorrowQuantity
+        {
+            set { _borrowquantity = value; }
+            get { return _borrowquantity; }
+        }
+
+    }
+
+    public partial class FixedAssetStock
+    {
+        private int _id;
+        private int _materielstockid;
+        private string _fixedassetno;
+        private string _borrower;
+        private DateTime _borrowdate;
+        private DateTime _returndate;
+        private int _status;
+        private string _remark;
+        /// <summary>
+        /// auto_increment
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int MaterielStockID
+        {
+            set { _materielstockid = value; }
+            get { return _materielstockid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string FixedAssetNo
+        {
+            set { _fixedassetno = value; }
+            get { return _fixedassetno; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Borrower
+        {
+            set { _borrower = value; }
+            get { return _borrower; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime BorrowDate
+        {
+            set { _borrowdate = value; }
+            get { return _borrowdate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime ReturnDate
+        {
+            set { _returndate = value; }
+            get { return _returndate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Status
+        {
+            set { _status = value; }
+            get { return _status; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+
     }
 
 }
