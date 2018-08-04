@@ -4782,6 +4782,156 @@ namespace AoHeManage
             }
             #endregion
 
+            #region 获取物料入库列表
+            if (action == "getRecordPage_StoreManage")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string queryName = context.Request.Params["queryName"];
+                if (!string.IsNullOrWhiteSpace(queryName))
+                {
+                    strWhere.AppendFormat(" and b.Name like '%{0}%' ", queryName);
+                }
+                result = getRecordPage_StoreManage(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 保存物料入库
+            if (action == "SaveStoreManage")
+            {
+                var saveflag = context.Request.Params["saveflag"];
+                var ID = context.Request.Params["ID"];
+                var materielID = context.Request.Params["materielID"];
+                var purchaseApplyID = context.Request.Params["purchaseApplyID"];
+                var fixedAssetNo = context.Request.Params["fixedAssetNo"];
+                var storeQuantity = context.Request.Params["storeQuantity"];
+                var storePrice = context.Request.Params["storePrice"];
+                var storePeople = context.Request.Params["storePeople"];
+                var storeDate = context.Request.Params["storeDate"];
+                var status = context.Request.Params["status"];
+                var remark = context.Request.Params["remark"];
+                StoreManage model = new StoreManage();
+                model.MaterielID = Convert.ToInt16(materielID);
+                model.PurchaseApplyID = Convert.ToInt16(purchaseApplyID);
+                model.FixedAssetNo = fixedAssetNo;
+                model.StoreQuantity = Convert.ToInt16(storeQuantity);
+                model.StorePrice = Convert.ToDecimal(storePrice);
+                model.StorePeople = storePeople;
+                model.StoreDate = Convert.ToDateTime(storeDate);
+                model.Status = Convert.ToInt16(status);
+                model.Remark = remark;
+                string excuteResult = string.Empty;
+                if (saveflag == "add")
+                {
+                    excuteResult = dal.AddStoreManage(model).ToString();
+                }
+                if (saveflag == "edit")
+                {
+                    model.ID = Convert.ToInt16(ID);
+
+                    excuteResult = dal.UpdateStoreManage(model).ToString();
+                }
+                result = excuteResult.ToString();
+            }
+            #endregion
+
+            #region 根据ID获取物料入库
+            if (action == "GetStoreManageByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dal.GetStoreManageByID(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
+            #region 获取申请完成物料采购明细
+            if (action == "getRecordPage_PurchaseApplyDetail")
+            {
+                //StringBuilder strWhere = new StringBuilder();
+                //string queryName = context.Request.Params["queryName"];
+                //if (!string.IsNullOrWhiteSpace(queryName))
+                //{
+                //    strWhere.AppendFormat(" and b.Name like '%{0}%' ", queryName);
+                //}
+                result = getRecordPage_PurchaseApplyDetail("");
+                //strWhere = null;
+            }
+            #endregion
+
+            #region 确认物料入库
+            if (action == "ConfirmStored")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dal.ConfirmStored(ID);
+                result = staff.ToString();
+            }
+            #endregion
+
+            #region 获取物料领用列表
+            if (action == "getRecordPage_UseManage")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string queryName = context.Request.Params["queryName"];
+                if (!string.IsNullOrWhiteSpace(queryName))
+                {
+                    strWhere.AppendFormat(" and b.Name like '%{0}%' ", queryName);
+                }
+                result = getRecordPage_UseManage(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 保存物料领用
+            if (action == "SaveUseManage")
+            {
+                var saveflag = context.Request.Params["saveflag"];
+                var ID = context.Request.Params["ID"];
+                var materielID = context.Request.Params["materielID"];
+                var useQuantity = context.Request.Params["useQuantity"];
+                var usePeople = context.Request.Params["usePeople"];
+                var useDate = context.Request.Params["useDate"];
+                var remark = context.Request.Params["remark"];
+                UseManage model = new UseManage();
+                model.MaterielID = Convert.ToInt16(materielID);
+                model.UseQuantity = Convert.ToInt16(useQuantity);
+                model.UsePeople = usePeople;
+                model.UseDate = Convert.ToDateTime(useDate);
+                model.Remark = remark;
+                string excuteResult = string.Empty;
+                if (saveflag == "add")
+                {
+                    excuteResult = dal.AddUseManage(model).ToString();
+                }
+                result = excuteResult.ToString();
+            }
+            #endregion
+
+            #region 根据ID获取物料领用
+            if (action == "GetUseManageByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dal.GetUseManageByID(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
+            #region 获取物料库存明细
+            if (action == "getRecordPage_MeterielStock")
+            {
+                StringBuilder strWhere = new StringBuilder();
+                strWhere.AppendFormat(" and c.IsConsumable=1 ");
+                result = getRecordPage_MaterielStock(strWhere.ToString());
+                strWhere = null;
+            }
+            #endregion
 
             context.Response.Write(result);
             context.Response.Flush();
@@ -7584,6 +7734,218 @@ namespace AoHeManage
                     tblHtml.Append("<td>" + dt.Rows[i]["TotalPrice"] + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
                     tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">编辑</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 物料入库列表
+        private string getRecordPage_StoreManage(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            DataSet ds = dal.GetStoreManageList(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_StoreManage(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_StoreManage(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:20%'>物料</th>"
+                           + "<th style='width:10%'>入库数量</th>"
+                           + "<th style='width:10%'>入库金额</th>"
+                           + "<th style='width:10%'>入库人</th>"
+                           + "<th style='width:20%'>入库日期</th>"
+                           + "<th style='width:10%'>状态</th>"
+                           + "<th style='width:10%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Name"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["StoreQuantity"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["StorePrice"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["StorePeopleName"] + "</td>");
+                    tblHtml.Append("<td>" + (Convert.ToDateTime(dt.Rows[i]["StoreDate"]).ToString("yyyy-MM-dd")) + "</td>");
+                    var status = ((dt.Rows[i]["Status"].ToString() == "0") ? "入库中" : "入库完成");
+                    tblHtml.Append("<td>" + status + "</td>");
+                    var actions = string.Empty;
+                    if (status == "入库中")
+                    {
+                        actions += "<a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">编辑</a>";
+                        actions += "<a class='ml_20' href='javascript:void(0)' onclick=\"ConfirmStored(" + dt.Rows[i]["ID"] + ")\">确认物料入库</a>";
+                    }
+                    if (status == "入库完成")
+                    {
+                        actions += "完成";
+                    }
+                    tblHtml.Append("<td>" + actions + "</td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 申请完成物料采购明细
+        private string getRecordPage_PurchaseApplyDetail(string where)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            DataSet ds = dal.GetPurchaseApplyDetailList(where, sortname);
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:10%'>申请部门</th>"
+                           + "<th style='width:10%'>申请日期</th>"
+                           + "<th style='width:20%'>物料</th>"
+                           + "<th style='width:10%'>单价</th>"
+                           + "<th style='width:10%'>待入库数量</th>"
+                           + "<th style='width:10%'>已入库数量</th>"
+                           + "<th style='width:10%'>状态</th>"
+                           + "<th style='width:10%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            DataTable dt = ds.Tables[0];
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    var price = dt.Rows[i]["Price"];
+                    var name = dt.Rows[i]["Name"];
+                    var storingQuantity = dt.Rows[i]["StoringQuantity"];
+                    tblHtml.Append("<tr Price='" + price + "' Name='" + name + "' StoringQuantity='" + storingQuantity + "' IsConsumable='" + dt.Rows[i]["IsConsumable"] + "' MaterielID='" + dt.Rows[i]["MaterielID"] + "' PurchaseApplyID='" + dt.Rows[i]["PurchaseApplyID"] + "'>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["ApplyDept"] + "</td>");
+                    tblHtml.Append("<td>" + (Convert.ToDateTime(dt.Rows[i]["ApplyDate"]).ToString("yyyy-MM-dd")) + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Name"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Price"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["StoringQuantity"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["StoredQuantity"] + "</td>");
+                    tblHtml.Append("<td>申请完成</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick='ChooseDetail(this)'>入库</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 物料领用列表
+        private string getRecordPage_UseManage(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            DataSet ds = dal.GetUseManageList(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_UseManage(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_UseManage(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:15%'>物料</th>"
+                           + "<th style='width:10%'>领用数量</th>"
+                           + "<th style='width:15%'>领用人</th>"
+                           + "<th style='width:20%'>领用日期</th>"
+                           + "<th style='width:30%'>备注</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Name"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["UseQuantity"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["UsePeopleName"] + "</td>");
+                    tblHtml.Append("<td>" + (Convert.ToDateTime(dt.Rows[i]["UseDate"]).ToString("yyyy-MM-dd")) + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 物料库存明细
+        private string getRecordPage_MaterielStock(string where)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = string.Empty;
+            DataSet ds = dal.GetMaterielStockList(where, sortname);
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:30%'>物料</th>"
+                           + "<th style='width:20%'>单价</th>"
+                           + "<th style='width:20%'>库存</th>"
+                           + "<th style='width:20%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            DataTable dt = ds.Tables[0];
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    var name = dt.Rows[i]["Name"];
+                    var stockQuantity = dt.Rows[i]["StockQuantity"];
+                    tblHtml.Append("<tr Name='" + name + "' StockQuantity='" + stockQuantity + "' MaterielID='" + dt.Rows[i]["MaterielID"] + "' >");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + name + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Price"] + "</td>");
+                    tblHtml.Append("<td>" + stockQuantity + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick='ChooseDetail(this)'>领用</a></td>");
                     tblHtml.Append("</tr>");
                 }
             }

@@ -3849,5 +3849,180 @@ namespace AoHeManage.Dal
             return model;
         }
         #endregion
+
+        #region 物料入库管理
+        public DataSet GetStoreManageList(int currentPage, int pageSize, string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select COUNT(1) as totalrow from storemanage a ");
+            strSql.AppendLine(" inner join materiel b on a.MaterielID=b.ID ");
+            strSql.AppendLine(" left join staffinfo c on a.StorePeople=c.StaffNo ");
+            strSql.AppendFormat(" where 1=1 {0} ; ", strWhere);
+
+            strSql.AppendLine(" select a.*,b.Name,c.Name as StorePeopleName from storemanage a ");
+            strSql.AppendLine(" inner join materiel b on a.MaterielID=b.ID ");
+            strSql.AppendLine(" left join staffinfo c on a.StorePeople=c.StaffNo ");
+            strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+            MySqlParameter[] parameters = {
+                        new MySqlParameter("@currentpage", MySqlDbType.Int16),
+                        new MySqlParameter("@pagesize", MySqlDbType.Int16)
+                        };
+            parameters[0].Value = currentPage;
+            parameters[1].Value = pageSize;
+            return DbHelperSQL.Query(strSql.ToString(), parameters);
+        }
+        public int AddStoreManage(StoreManage model)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" insert into storemanage(ID,PurchaseApplyID,MaterielID,FixedAssetNo,StoreQuantity,StorePrice,StorePeople,StoreDate,Remark,Status) values ");
+            strSql.AppendFormat(" (null,'{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}' ) ",
+                model.PurchaseApplyID, model.MaterielID, model.FixedAssetNo, model.StoreQuantity, model.StorePrice, model.StorePeople, model.StoreDate, model.Remark, model.Status);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+
+        public int UpdateStoreManage(StoreManage model)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" update storemanage ");
+            strSql.AppendFormat("  set StoreQuantity='{0}',StorePrice='{1}',Remark='{2}',Status='{3}',StorePeople='{4}',StoreDate='{5}' ",
+                model.StoreQuantity, model.StorePrice, model.Remark, model.Status, model.StorePeople,model.StoreDate);
+            strSql.AppendFormat(" where ID='{0}' ", model.ID);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+        public StoreManage GetStoreManageByID(int ID)
+        {
+            StoreManage model = new StoreManage();
+            string strSql = string.Format(" select a.*,b.Name as MaterielName,b.Price,c.StoringQuantity from storemanage a inner join materiel b on a.MaterielID=b.ID inner join purchaseapplydetail c on a.PurchaseApplyID=c.PurchaseApplyID and a.MaterielID=c.MaterielID where a.ID ='{0}' ", ID);
+            DataSet ds = new DataSet();
+            ds = DbHelperSQL.Query(strSql);
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                var row = ds.Tables[0].Rows[0];
+                model.ID = ID;
+                model.PurchaseApplyID = Convert.ToInt16(row["PurchaseApplyID"]);
+                model.MaterielID = Convert.ToInt16(row["MaterielID"]);
+                model.FixedAssetNo = row["FixedAssetNo"].ToString();
+                model.StoreQuantity = Convert.ToInt16(row["StoreQuantity"]);
+                model.StorePrice = Convert.ToDecimal(row["StorePrice"]);
+                model.StorePeople = row["StorePeople"].ToString();
+                model.StoreDate = Convert.ToDateTime(row["StoreDate"]);
+                model.Remark = row["Remark"].ToString();
+                model.Status = Convert.ToInt16(row["Status"]);
+                model.MaterielName = row["MaterielName"].ToString();
+                model.Price = Convert.ToDecimal(row["Price"]);
+                model.StoringQuantity = Convert.ToInt16(row["StoringQuantity"]);
+            }
+            return model;
+        }
+
+        public DataSet GetPurchaseApplyDetailList(string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select a.*,c.`Name`,c.IsConsumable,b.ApplyDept,b.ApplyDate from purchaseapplydetail a ");
+            strSql.AppendLine(" inner join purchaseapply b on a.PurchaseApplyID=b.ID ");
+            strSql.AppendLine(" inner join materiel c on a.MaterielID=c.ID ");
+            strSql.AppendFormat(" where b.`Status`=1 and a.StoringQuantity>0 {0} ", strWhere);
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+        public int ConfirmStored(string ID)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" select MaterielID,StoreQuantity into @MaterielID,@StoreQuantity from storemanage where ID='{0}'; ", ID);
+            strSql.AppendFormat(" update storemanage set `Status`=1 where ID='{0}'; ", ID);
+            strSql.AppendLine("  ");
+            strSql.AppendLine(" update purchaseapplydetail a ");
+            strSql.AppendLine(" inner join storemanage b on a.PurchaseApplyID=b.PurchaseApplyID and a.MaterielID=b.MaterielID ");
+            strSql.AppendLine(" set a.StoredQuantity=a.StoredQuantity+@StoreQuantity,a.StoringQuantity=a.StoringQuantity-@StoreQuantity ");
+            strSql.AppendFormat(" where b.ID='{0}'; ", ID);
+            strSql.AppendLine("  ");
+            strSql.AppendLine(" INSERT into materielstock(MaterielID,TotalStoreQuantity,UseQuantity,LoseQuantity,StockQuantity,BorrowQuantity)  ");
+            strSql.AppendLine(" VALUES(@MaterielID,@StoreQuantity,0,0,@StoreQuantity,0)  ");
+            strSql.AppendLine(" on DUPLICATE key update TotalStoreQuantity=TotalStoreQuantity+@StoreQuantity,StockQuantity=StockQuantity+@StoreQuantity; ");
+            strSql.AppendLine(" insert into fixedassetstock(ID,MaterielStockID,FixedAssetNo,Borrower,BorrowDate,ReturnDate,`Status`,Remark) ");
+            strSql.AppendFormat(" select null,MaterielID,FixedAssetNo,'',null,null,1,'' from storemanage a inner join materiel b on a.MaterielID=b.ID where a.ID='{0}' and b.IsConsumable=0 ", ID);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+        #endregion
+
+        #region 物料领用管理
+        public DataSet GetUseManageList(int currentPage, int pageSize, string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select COUNT(1) as totalrow from usemanage a ");
+            strSql.AppendLine(" inner join materiel b on a.MaterielID=b.ID ");
+            strSql.AppendLine(" left join staffinfo c on a.UsePeople=c.StaffNo ");
+            strSql.AppendFormat(" where 1=1 {0} ; ", strWhere);
+
+            strSql.AppendLine(" select a.*,b.Name,c.Name as UsePeopleName from usemanage a ");
+            strSql.AppendLine(" inner join materiel b on a.MaterielID=b.ID ");
+            strSql.AppendLine(" left join staffinfo c on a.UsePeople=c.StaffNo ");
+            strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+            MySqlParameter[] parameters = {
+                        new MySqlParameter("@currentpage", MySqlDbType.Int16),
+                        new MySqlParameter("@pagesize", MySqlDbType.Int16)
+                        };
+            parameters[0].Value = currentPage;
+            parameters[1].Value = pageSize;
+            return DbHelperSQL.Query(strSql.ToString(), parameters);
+        }
+        public int AddUseManage(UseManage model)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" insert into usemanage(ID,MaterielID,UseDate,UseQuantity,UsePeople,Remark) values ");
+            strSql.AppendFormat(" (null,'{0}','{1}','{2}','{3}','{4}' ); ",
+                model.MaterielID, model.UseDate, model.UseQuantity, model.UsePeople, model.Remark);
+
+            strSql.AppendFormat(" update materielstock set UseQuantity=UseQuantity+{0},StockQuantity=StockQuantity-{0} where MaterielID='{1}'; ", model.UseQuantity, model.MaterielID);
+
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+        public UseManage GetUseManageByID(int ID)
+        {
+            UseManage model = new UseManage();
+            string strSql = string.Format(" select a.*,b.Name as MaterielName,c.StockQuantity from storemanage a inner join materiel b on a.MaterielID=b.ID inner join materielstock c on a.MaterielID=c.MaterielID where a.ID ='{0}' ", ID);
+            DataSet ds = new DataSet();
+            ds = DbHelperSQL.Query(strSql);
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                var row = ds.Tables[0].Rows[0];
+                model.ID = ID;
+                model.MaterielID = Convert.ToInt16(row["MaterielID"]);
+                model.UseQuantity = Convert.ToInt16(row["UseQuantity"]);
+                model.UsePeople = row["UsePeople"].ToString();
+                model.UseDate = Convert.ToDateTime(row["UseDate"]);
+                model.Remark = row["Remark"].ToString();
+                model.MaterielName = row["MaterielName"].ToString();
+                model.StockQuantity = Convert.ToInt16(row["StockQuantity"]);
+            }
+            return model;
+        }
+
+        public DataSet GetMaterielStockList(string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select a.*,c.`Name`,c.Price from materielstock a ");
+            strSql.AppendLine(" inner join materiel c on a.MaterielID=c.ID ");
+            strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+        #endregion
     }
 }

@@ -1017,6 +1017,7 @@ namespace AoHeManage.Model
             set { _materielid = value; }
             get { return _materielid; }
         }
+        public string FixedAssetNo { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -1065,26 +1066,19 @@ namespace AoHeManage.Model
             set { _remark = value; }
             get { return _remark; }
         }
-
+        public string MaterielName { get; set; }
+        public decimal Price { get; set; }
+        public int StoringQuantity { get; set; }
     }
 
     public class MaterielStock
     {
-        private int _id;
         private int _materielid;
         private int _totalstorequantity;
         private int _usequantity;
         private int _losequantity;
         private int _stockquantity;
         private int _borrowquantity;
-        /// <summary>
-        /// auto_increment
-        /// </summary>
-        public int ID
-        {
-            set { _id = value; }
-            get { return _id; }
-        }
         /// <summary>
         /// 
         /// </summary>
@@ -1136,7 +1130,7 @@ namespace AoHeManage.Model
 
     }
 
-    public partial class FixedAssetStock
+    public class FixedAssetStock
     {
         private int _id;
         private int _materielstockid;
@@ -1213,4 +1207,16 @@ namespace AoHeManage.Model
 
     }
 
+    public class UseManage
+    {
+        public int ID { get; set; }
+        public int MaterielID { get; set; }
+        public int UseQuantity { get; set; }
+        public string UsePeople { get; set; }
+        public string Remark { get; set; }
+        public DateTime UseDate { get; set; }
+
+        public string MaterielName { get; set; }
+        public int StockQuantity { get; set; }
+    }
 }

@@ -265,8 +265,8 @@
                 + "<td><input class='requirePrice editInput' disabled='disabled'  type='text' /></td>"
                 + "<td><input class='purchaseQuantity editInput'  type='text' value='0' onkeyup='SumPurchasePrice(this)'/></td>"
                 + "<td><input class='purchasePrice editInput' disabled='disabled'  type='text' /></td>"
-                + "<td><input class='storedQuantity editInput'  type='text' /></td>"
                 + "<td><input class='storingQuantity editInput'  type='text' /></td>"
+                + "<td><input class='storedQuantity editInput'  type='text' /></td>"
                 + "<td><input class='remark editInput'  type='text' /></td>"
                 + "<td><a href=\"javascript:void(0)\" onclick='DeleteDetail(this)'>删除</a></td></tr>");
             if (obj) {
@@ -277,8 +277,8 @@
                 html.find(".requirePrice").val(obj.RequirePrice);
                 html.find(".purchaseQuantity").val(obj.PurchaseQuantity);
                 html.find(".purchasePrice").val(obj.PurchasePrice);
-                html.find(".storedQuantity").val(obj.StoredQuantity);
                 html.find(".storingQuantity").val(obj.StoringQuantity);
+                html.find(".storedQuantity").val(obj.StoredQuantity);
                 html.find(".remark").val(obj.Remark);
             }
             $("#purchaseApplyDetail").append(html);
@@ -383,7 +383,7 @@
                         <th style="width:10%">采购数量</th>
                         <th style="width:10%">采购总金额</th>
                         <th style="width:10%">待入库数量</th>
-                        <th style="width:10%">以入库数量</th>
+                        <th style="width:10%">已入库数量</th>
                         <th style="width:10%">备注</th>
                         <th style="width:10%">操作</th>
                     </tr>

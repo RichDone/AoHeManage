@@ -185,7 +185,9 @@
     <Content Include="SubPage\StaffManage.html" />
     <Content Include="SubPage\Guest.html" />
     <Content Include="SubPage\StaffTransfer.html" />
+    <Content Include="SubPage\StoreManage.html" />
     <Content Include="SubPage\Supplier.html" />
+    <Content Include="SubPage\UseManage.html" />
     <Content Include="times\calendar.js" />
     <Content Include="times\lang\en.js" />
     <Content Include="times\lang\zh-cn.js" />
