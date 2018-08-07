@@ -123,6 +123,7 @@
     </Content>
     <Content Include="MainHandler.ashx" />
     <None Include="Properties\PublishProfiles\AoHePublish.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

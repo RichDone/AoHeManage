@@ -6,185 +6,188 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>G:\AoHeManage</_PublishTargetUrl>
+    <_PublishTargetUrl>J:\AoHe发布</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="ApplicationInsights.config">
-      <publishTime>09/15/2017 11:40:20</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/AoHeManage.dll">
-      <publishTime>07/06/2018 15:19:20</publishTime>
+      <publishTime>08/07/2018 22:06:32</publishTime>
     </File>
     <File Include="bin/AoHeManage.pdb">
-      <publishTime>07/06/2018 15:19:20</publishTime>
+      <publishTime>08/07/2018 22:06:32</publishTime>
     </File>
     <File Include="bin/ApplicationInsights.config">
-      <publishTime>09/15/2017 11:40:20</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>07/06/2018 15:19:32</publishTime>
+      <publishTime>08/07/2018 22:06:38</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>07/06/2018 15:19:32</publishTime>
+      <publishTime>08/07/2018 22:06:38</publishTime>
+    </File>
+    <File Include="bin/Google.Protobuf.dll">
+      <publishTime>12/21/2017 20:23:44</publishTime>
     </File>
     <File Include="bin/Maticsoft.DBUtility.dll">
-      <publishTime>08/18/2017 18:53:19</publishTime>
+      <publishTime>08/18/2017 18:53:20</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.Agent.Intercept.dll">
-      <publishTime>09/15/2017 11:41:02</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.DependencyCollector.dll">
-      <publishTime>09/15/2017 11:41:00</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.PerfCounterCollector.dll">
-      <publishTime>09/15/2017 11:40:56</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.ServerTelemetryChannel.dll">
-      <publishTime>09/15/2017 11:40:57</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.Web.dll">
-      <publishTime>09/15/2017 11:41:01</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/Microsoft.AI.WindowsServer.dll">
-      <publishTime>09/15/2017 11:41:03</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/Microsoft.ApplicationInsights.dll">
-      <publishTime>09/15/2017 11:41:02</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
-      <publishTime>09/15/2017 11:40:58</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/MySql.Data.dll">
-      <publishTime>08/18/2017 17:33:49</publishTime>
+      <publishTime>08/18/2017 17:33:50</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/Microsoft.CodeAnalysis.VisualBasic.dll">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/Microsoft.CSharp.Core.targets">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/Microsoft.VisualBasic.Core.targets">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/System.Collections.Immutable.dll">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/System.Reflection.Metadata.dll">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/vbc.exe">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/VBCSCompiler.exe">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="bin/roslyn/VBCSCompiler.exe.config">
-      <publishTime>09/15/2017 11:40:59</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="Css/style.css">
-      <publishTime>05/14/2018 18:41:17</publishTime>
+      <publishTime>07/29/2018 23:25:17</publishTime>
     </File>
     <File Include="Exception.txt">
-      <publishTime>06/14/2018 19:18:36</publishTime>
+      <publishTime>08/05/2018 01:23:06</publishTime>
     </File>
     <File Include="Image/arrows-ffffff.png">
-      <publishTime>09/15/2017 11:40:21</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="Index.html">
-      <publishTime>06/13/2018 16:21:05</publishTime>
+      <publishTime>08/07/2018 22:05:18</publishTime>
     </File>
     <File Include="Main.html">
       <publishTime>08/31/2017 16:22:34</publishTime>
     </File>
     <File Include="MainHandler.ashx">
-      <publishTime>09/15/2017 11:40:21</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="packages.config">
-      <publishTime>09/15/2017 11:40:21</publishTime>
+      <publishTime>07/13/2018 12:33:22</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>07/06/2018 15:19:23</publishTime>
+      <publishTime>08/07/2018 22:06:34</publishTime>
     </File>
     <File Include="Script/global.js">
-      <publishTime>01/04/2018 15:45:41</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="Script/jquery-1.4.2.min.js">
-      <publishTime>09/15/2017 11:40:23</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="Script/jquerydocwrite.easyui.min.js">
-      <publishTime>09/15/2017 11:40:23</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/Accident.html">
-      <publishTime>07/03/2018 17:42:22</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/AccidentFollwo.html">
-      <publishTime>02/01/2018 10:33:01</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/AccidentStats.html">
-      <publishTime>02/01/2018 10:33:01</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/ActivityReserve.html">
-      <publishTime>06/20/2018 14:07:28</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/ActivitySchedual.html">
-      <publishTime>06/20/2018 11:36:34</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/AddAccident.html">
-      <publishTime>01/05/2018 17:45:11</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/AddDailyRecord.html">
-      <publishTime>07/03/2018 16:36:19</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/AddSchedual.html">
-      <publishTime>01/04/2018 16:46:43</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/AddStaffEvaluate.html">
-      <publishTime>07/03/2018 18:37:27</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/AssessTemplate.html">
-      <publishTime>02/01/2018 10:33:01</publishTime>
+      <publishTime>07/29/2018 20:46:28</publishTime>
     </File>
     <File Include="SubPage/BasicInfoManage.html">
-      <publishTime>07/03/2018 14:41:16</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/DailyRecord.html">
-      <publishTime>07/03/2018 15:42:53</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/DailyRecordStats.html">
-      <publishTime>02/01/2018 10:33:01</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/EvaluateTemplate.html">
-      <publishTime>03/12/2018 17:10:46</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/FloorManage.html">
-      <publishTime>02/01/2018 17:15:35</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/Guest.html">
-      <publishTime>04/11/2018 11:23:46</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/GuestChangeLog.html">
-      <publishTime>03/06/2018 17:14:28</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/GuestConnection.html">
-      <publishTime>03/06/2018 18:03:46</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/GuestEvaluate.html">
-      <publishTime>03/13/2018 19:18:44</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/GuestNursePlan.html">
-      <publishTime>03/14/2018 19:52:39</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/Manage_AccidentType.html">
       <publishTime>09/15/2017 11:40:22</publishTime>
@@ -192,122 +195,143 @@
     <File Include="SubPage/Manage_DailyRecordType.html">
       <publishTime>11/20/2017 15:10:13</publishTime>
     </File>
+    <File Include="SubPage/Materiel.html">
+      <publishTime>07/29/2018 20:36:11</publishTime>
+    </File>
+    <File Include="SubPage/MaterielApply.html">
+      <publishTime>07/29/2018 20:42:17</publishTime>
+    </File>
+    <File Include="SubPage/MaterielType.html">
+      <publishTime>07/17/2018 13:09:09</publishTime>
+    </File>
     <File Include="SubPage/NurseProject.html">
-      <publishTime>03/14/2018 18:08:57</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/OtherWorkTime.html">
-      <publishTime>02/01/2018 10:33:01</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/PostInfoManage.html">
-      <publishTime>02/01/2018 10:33:01</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/Product.html">
-      <publishTime>05/14/2018 16:37:20</publishTime>
+      <publishTime>07/17/2018 17:05:01</publishTime>
     </File>
     <File Include="SubPage/ProductPrice.html">
-      <publishTime>04/23/2018 16:55:54</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/ProductServiceObject.html">
-      <publishTime>05/14/2018 18:45:04</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/ProductSkillRequired.html">
-      <publishTime>05/14/2018 18:44:28</publishTime>
+      <publishTime>07/29/2018 20:43:49</publishTime>
     </File>
     <File Include="SubPage/ProductType.html">
-      <publishTime>04/11/2018 15:32:04</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
+    </File>
+    <File Include="SubPage/PurchaseApply.html">
+      <publishTime>08/04/2018 22:54:01</publishTime>
     </File>
     <File Include="SubPage/ReasonableSchedualInfo.html">
-      <publishTime>01/25/2018 16:54:09</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/RoomCombine.html">
-      <publishTime>02/01/2018 10:33:01</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/RoomManage.html">
-      <publishTime>02/01/2018 17:08:52</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/Schedual.html">
-      <publishTime>01/25/2018 15:56:57</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/SchedualCount.html">
-      <publishTime>07/03/2018 15:27:28</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/SchedualTemplate.html">
-      <publishTime>02/01/2018 10:33:01</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/SchedualTime.html">
-      <publishTime>02/01/2018 10:33:01</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/ServiceEvaluation.html">
-      <publishTime>05/24/2018 16:36:12</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/ServiceExecute.html">
-      <publishTime>05/22/2018 19:38:29</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/ServicePay.html">
-      <publishTime>06/14/2018 18:55:03</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/ServiceReserve.html">
-      <publishTime>05/24/2018 17:20:53</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/StaffAssess.html">
-      <publishTime>03/13/2018 18:23:54</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/StaffConnection.html">
-      <publishTime>03/06/2018 17:24:36</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/StaffEvaluate.html">
-      <publishTime>07/03/2018 18:30:45</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/StaffInfo.html">
       <publishTime>09/15/2017 11:40:22</publishTime>
     </File>
     <File Include="SubPage/StaffLeave.html">
-      <publishTime>02/01/2018 10:33:02</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/StaffManage.html">
-      <publishTime>05/10/2018 09:58:47</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="SubPage/StaffTransfer.html">
-      <publishTime>03/06/2018 17:13:07</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
+    </File>
+    <File Include="SubPage/StoreManage.html">
+      <publishTime>08/05/2018 04:12:08</publishTime>
+    </File>
+    <File Include="SubPage/Supplier.html">
+      <publishTime>07/17/2018 18:07:17</publishTime>
+    </File>
+    <File Include="SubPage/UseManage.html">
+      <publishTime>08/05/2018 04:13:12</publishTime>
     </File>
     <File Include="times/calendar.js">
-      <publishTime>09/15/2017 11:40:20</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/lang/en.js">
-      <publishTime>09/15/2017 11:40:20</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/lang/zh-cn.js">
-      <publishTime>09/15/2017 11:40:20</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/lang/zh-tw.js">
-      <publishTime>09/15/2017 11:40:20</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/skin/datePicker.gif">
-      <publishTime>09/15/2017 11:40:20</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/skin/default/datepicker.css">
-      <publishTime>09/15/2017 11:40:20</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/skin/default/img.gif">
-      <publishTime>09/15/2017 11:40:20</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/skin/WdatePicker.css">
-      <publishTime>09/15/2017 11:40:21</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/skin/whyGreen/bg.jpg">
-      <publishTime>09/15/2017 11:40:21</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/skin/whyGreen/datepicker.css">
-      <publishTime>09/15/2017 11:40:21</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/skin/whyGreen/img.gif">
-      <publishTime>09/15/2017 11:40:21</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="times/WdatePicker.js">
-      <publishTime>11/16/2017 18:16:47</publishTime>
+      <publishTime>07/13/2018 12:26:18</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>07/06/2018 15:19:21</publishTime>
+      <publishTime>08/07/2018 22:06:32</publishTime>
     </File>
   </ItemGroup>
 </Project>
