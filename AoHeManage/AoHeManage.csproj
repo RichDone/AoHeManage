@@ -151,6 +151,8 @@
     <Content Include="SubPage\DailyRecord.html" />
     <Content Include="SubPage\DailyRecordStats.html" />
     <Content Include="SubPage\EvaluateTemplate.html" />
+    <Content Include="SubPage\FixedAssetBorrow.html" />
+    <Content Include="SubPage\FixedAssetLose.html" />
     <Content Include="SubPage\FloorManage.html" />
     <Content Include="SubPage\GuestChangeLog.html" />
     <Content Include="SubPage\GuestConnection.html" />

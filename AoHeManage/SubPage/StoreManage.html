@@ -106,6 +106,10 @@
                 alert("请输入入库数量！");
                 return false;
             }
+            if (parseInt(storeQuantity) < 0) {
+                alert("入库数量不能小于等于0！");
+                return false;
+            }
             if (storePeople == "") {
                 alert("请选择入库人！");
                 return false;
@@ -117,6 +121,10 @@
             if ($("#isConsumable").val() == "0") {
                 if (fixedAssetNo == "") {
                     alert("非消耗品的物料请输入固定资产编号！");
+                    return false;
+                }
+                if (parseInt(storeQuantity) > 1) {
+                    alert("非消耗品的物料每次入库数量应为 1 ，同时对应固定资产编号！");
                     return false;
                 }
             }

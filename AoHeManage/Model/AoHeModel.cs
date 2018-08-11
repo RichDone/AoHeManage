@@ -1133,9 +1133,9 @@ namespace AoHeManage.Model
     public class FixedAssetStock
     {
         private int _id;
-        private int _materielstockid;
+        private int _materielid;
         private string _fixedassetno;
-        private string _borrower;
+        private string _borrowpeople;
         private DateTime _borrowdate;
         private DateTime _returndate;
         private int _status;
@@ -1151,10 +1151,10 @@ namespace AoHeManage.Model
         /// <summary>
         /// 
         /// </summary>
-        public int MaterielStockID
+        public int MaterielID
         {
-            set { _materielstockid = value; }
-            get { return _materielstockid; }
+            set { _materielid = value; }
+            get { return _materielid; }
         }
         /// <summary>
         /// 
@@ -1167,10 +1167,10 @@ namespace AoHeManage.Model
         /// <summary>
         /// 
         /// </summary>
-        public string Borrower
+        public string BorrowPeople
         {
-            set { _borrower = value; }
-            get { return _borrower; }
+            set { _borrowpeople = value; }
+            get { return _borrowpeople; }
         }
         /// <summary>
         /// 
@@ -1219,4 +1219,96 @@ namespace AoHeManage.Model
         public string MaterielName { get; set; }
         public int StockQuantity { get; set; }
     }
+
+    public partial class FixedAssetBorrow
+    {
+        private int _id;
+        private int _materielid;
+        private string _fixedassetno;
+        private string _borrowpeople;
+        private DateTime? _borrowdate;
+        private DateTime? _estimatereturndate;
+        private DateTime? _actualreturndate;
+        private string _borrowremark;
+        private string _returnremark;
+
+        [Custom(Redundant =true)]
+        public string MaterielName { get; set; }
+        [Custom(Redundant = true)]
+        public string BorrowName { get; set; }
+        public int Status { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int MaterielID
+        {
+            set { _materielid = value; }
+            get { return _materielid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string FixedAssetNo
+        {
+            set { _fixedassetno = value; }
+            get { return _fixedassetno; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BorrowPeople
+        {
+            set { _borrowpeople = value; }
+            get { return _borrowpeople; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? BorrowDate
+        {
+            set { _borrowdate = value; }
+            get { return _borrowdate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? EstimateReturnDate
+        {
+            set { _estimatereturndate = value; }
+            get { return _estimatereturndate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime? ActualReturnDate
+        {
+            set { _actualreturndate = value; }
+            get { return _actualreturndate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string BorrowRemark
+        {
+            set { _borrowremark = value; }
+            get { return _borrowremark; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ReturnRemark
+        {
+            set { _returnremark = value; }
+            get { return _returnremark; }
+        }
+    }
+
 }

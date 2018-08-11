@@ -4933,6 +4933,144 @@ namespace AoHeManage
             }
             #endregion
 
+            #region 获取固定资产库存明细
+            if (action == "getRecordPage_FixedAssetStock")
+            {
+                StringBuilder strWhere = new StringBuilder();
+                strWhere.AppendFormat(" and a.`Status`=1 ");
+                result = getRecordPage_FixedAssetStock(strWhere.ToString());
+                strWhere = null;
+            }
+            #endregion
+
+            #region 获取固定资产借用列表
+            if (action == "getRecordPage_FixedAssetBorrow")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string queryName = context.Request.Params["queryName"];
+                string queryBeginDate = context.Request.Params["queryBeginDate"];
+                string queryEndDate = context.Request.Params["queryEndDate"];
+                if (!string.IsNullOrWhiteSpace(queryName))
+                {
+                    strWhere.AppendFormat(" and c.Name like '%{0}%' ", queryName);
+                }
+                if (!string.IsNullOrWhiteSpace(queryBeginDate))
+                {
+                    strWhere.AppendFormat(" and BorrowDate>= '{0}' ", queryBeginDate);
+                }
+                if (!string.IsNullOrWhiteSpace(queryEndDate))
+                {
+                    queryEndDate = Convert.ToDateTime(queryEndDate).AddDays(1).ToString("yyyy-MM-dd");
+                    strWhere.AppendFormat(" and BorrowDate< '{0}' ", queryEndDate);
+                }
+                result = getRecordPage_FixedAssetBorrow(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 保存固定资产借用
+            if (action == "SaveFixedAssetBorrow")
+            {
+                var saveflag = context.Request.Params["saveflag"];
+                var ID = context.Request.Params["ID"];
+                var materielID = context.Request.Params["materielID"];
+                var fixedAssetNo = context.Request.Params["fixedAssetNo"];
+                var borrwoPeople = context.Request.Params["borrwoPeople"];
+                var borrowDate = context.Request.Params["borrowDate"];
+                var estimateReturnDate = context.Request.Params["estimateReturnDate"];
+                var borrowRemark = context.Request.Params["borrowRemark"];
+                FixedAssetBorrow model = new FixedAssetBorrow();
+                model.MaterielID = Convert.ToInt16(materielID); ;
+                model.FixedAssetNo = fixedAssetNo;
+                model.BorrowPeople = borrwoPeople;
+                if (!string.IsNullOrWhiteSpace(borrowDate))
+                {
+                    model.BorrowDate = Convert.ToDateTime(borrowDate);
+                }
+                if (!string.IsNullOrWhiteSpace(estimateReturnDate))
+                {
+                    model.EstimateReturnDate = Convert.ToDateTime(estimateReturnDate);
+                }
+
+                model.Status = 0;
+                model.BorrowRemark = borrowRemark;
+                string excuteResult = string.Empty;
+                if (saveflag == "add")
+                {
+                    excuteResult = dalGlobal.Insert_Factory<FixedAssetBorrow>(model).ToString();
+                    if (Convert.ToInt32(excuteResult) > 0)
+                    {
+                        dal.AutoUpdateStock(model);
+                    }
+                }
+                if (saveflag == "edit")
+                {
+                    model.ID = Convert.ToInt16(ID);
+                    excuteResult = dalGlobal.Update_Factory<FixedAssetBorrow>(model).ToString();
+                }
+                result = excuteResult.ToString();
+            }
+            #endregion
+
+            #region 根据ID获取固定资产借用
+            if (action == "GetFixedAssetBorrowByID")
+            {
+                var ID = context.Request.Params["ID"];
+                string withRefundantColumn = "a.*,b.Name as MaterielName,c.Name as BorrowName";
+                string withRefundantFrom = "fixedassetborrow a inner join materiel b on a.MaterielID=b.ID left join staffinfo c on a.BorrowPeople=c.StaffNo";
+                var staff = dalGlobal.GetModel_Factory<FixedAssetBorrow>(Convert.ToInt16(ID), withRefundantColumn, withRefundantFrom);
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
+            #region 固定资产归还
+            if (action == "ReturnFixedAsset")
+            {
+                var ID = context.Request.Params["ID"];
+                var actualReturnDate = context.Request.Params["actualReturnDate"];
+                var returnRemark = context.Request.Params["returnRemark"];
+                var materielID = context.Request.Params["materielID"];
+                var fixedAssetNo = context.Request.Params["fixedAssetNo"];
+                var staff = dal.ReturnFixedAsset(ID, Convert.ToInt32(materielID), fixedAssetNo, Convert.ToDateTime(actualReturnDate), returnRemark);
+                result = staff.ToString();
+            }
+            #endregion
+
+            #region 固定资产遗失
+            if (action == "LoseFixedAsset")
+            {
+                var ID = context.Request.Params["ID"];
+                var loseRemark = context.Request.Params["loseRemark"];
+                var materielID = context.Request.Params["materielID"];
+                var fixedAssetNo = context.Request.Params["fixedAssetNo"];
+                var staff = dal.LoseFixedAsset(ID, Convert.ToInt32(materielID), fixedAssetNo, loseRemark);
+                result = staff.ToString();
+            }
+            #endregion
+
+            #region 获取固定资产库存明细（在库和遗失）
+            if (action == "getRecordPage_FixedAssetStockWithLose")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string queryName = context.Request.Params["queryName"];
+                if (!string.IsNullOrWhiteSpace(queryName))
+                {
+                    strWhere.AppendFormat(" and c.Name like '%{0}%' ", queryName);
+                }
+                strWhere.AppendFormat(" and a.`Status` in(1,2) ");
+                result = getRecordPage_FixedAssetStock(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
             context.Response.Write(result);
             context.Response.Flush();
             context.Response.End();
@@ -7946,6 +8084,194 @@ namespace AoHeManage
                     tblHtml.Append("<td>" + dt.Rows[i]["Price"] + "</td>");
                     tblHtml.Append("<td>" + stockQuantity + "</td>");
                     tblHtml.Append("<td><a href='javascript:void(0)' onclick='ChooseDetail(this)'>领用</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 固定资产库存明细
+        private string getRecordPage_FixedAssetStock(string where)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = string.Empty;
+            DataSet ds = dal.GetFixedAssetStockList(where, sortname);
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:20%'>固定资产编号</th>"
+                           + "<th style='width:30%'>固定资产名称</th>"
+                           + "<th style='width:20%'>状态</th>"
+                           + "<th style='width:20%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            DataTable dt = ds.Tables[0];
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    var name = dt.Rows[i]["Name"];
+                    var fixedAssetNo = dt.Rows[i]["FixedAssetNo"];
+                    var materielID = dt.Rows[i]["MaterielID"];
+                    tblHtml.Append("<tr Name='" + name + "' FixedAssetNo='" + fixedAssetNo + "' MaterielID='" + materielID + "' >");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + fixedAssetNo + "</td>");
+                    tblHtml.Append("<td>" + name + "</td>");
+                    var status = ((dt.Rows[i]["Status"].ToString() == "0") ? "借用中" : (dt.Rows[i]["Status"].ToString() == "1") ? "在库" : "遗失");
+                    tblHtml.Append("<td>" + status + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick='ChooseDetail(this)'>借用</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 固定资产借用列表
+        private string getRecordPage_FixedAssetBorrow(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            string withRefundantColumn = "a.*,b.Name as MaterielName,c.Name as BorrowName";
+            string withRefundantFrom = "fixedassetborrow a inner join materiel b on a.MaterielID=b.ID left join staffinfo c on a.BorrowPeople=c.StaffNo";
+            DataSet ds = dalGlobal.GetPageingRecord<FixedAssetBorrow>(currentpage, pagesize, where, sortname + sorttype, withRefundantColumn, withRefundantFrom);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_FixedAssetBorrow(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_FixedAssetBorrow(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:5%'>序号</th>"
+                           + "<th style='width:10%'>固定资产编号</th>"
+                           + "<th style='width:10%'>固定资产名称</th>"
+                           + "<th style='width:10%'>借用人</th>"
+                           + "<th style='width:15%'>借用日期</th>"
+                           + "<th style='width:15%'>预计归还日期</th>"
+                           + "<th style='width:15%'>实际归还日期</th>"
+                           + "<th style='width:10%'>状态</th>"
+                           + "<th style='width:10%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    var materielID = dt.Rows[i]["MaterielID"].ToString();
+                    var fixedAssetNo = dt.Rows[i]["FixedAssetNo"].ToString();
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + fixedAssetNo + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["MaterielName"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["BorrowName"] + "</td>");
+                    var borrowDate = dt.Rows[i]["BorrowDate"].Equals(DBNull.Value) ? (Convert.ToDateTime(dt.Rows[i]["BorrowDate"]).ToString("yyyy-MM-dd")) : "";
+                    var estimateReturnDate = (dt.Rows[i]["EstimateReturnDate"] != DBNull.Value) ? (Convert.ToDateTime(dt.Rows[i]["EstimateReturnDate"]).ToString("yyyy-MM-dd")) : "";
+                    var actualReturnDate = (dt.Rows[i]["ActualReturnDate"] != DBNull.Value) ? (Convert.ToDateTime(dt.Rows[i]["ActualReturnDate"]).ToString("yyyy-MM-dd")) : "";
+                    tblHtml.Append("<td>" + borrowDate + "</td>");
+                    tblHtml.Append("<td>" + estimateReturnDate + "</td>");
+                    tblHtml.Append("<td>" + actualReturnDate + "</td>");
+                    var status = ((dt.Rows[i]["Status"].ToString() == "0") ? "借用中" : "已归还");
+                    tblHtml.Append("<td>" + status + "</td>");
+                    var actions = string.Empty;
+                    if (status == "借用中")
+                    {
+                        actions += "<a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">查看</a>";
+                        actions += "<a class='ml_20' href='javascript:void(0)' onclick=\"ReturnFixedAsset(" + dt.Rows[i]["ID"] + "," + materielID + ",'" + fixedAssetNo + "')\">归还</a>";
+                    }
+                    else
+                    {
+                        actions += "<a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">查看</a>";
+                    }
+                    tblHtml.Append("<td>" + actions + "</td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 固定资产库存列表（包括遗失和在库）
+        private string getRecordPage_FixedAssetStock(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            DataSet ds = dal.GetFixedAssetStockList(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_FixedAssetStock(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_FixedAssetStock(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+               + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+               + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:20%'>固定资产编号</th>"
+                           + "<th style='width:30%'>固定资产名称</th>"
+                           + "<th style='width:10%'>单价</th>"
+                           + "<th style='width:15%'>状态</th>"
+                           + "<th style='width:15%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    var name = dt.Rows[i]["Name"];
+                    var fixedAssetNo = dt.Rows[i]["FixedAssetNo"];
+                    var materielID = dt.Rows[i]["MaterielID"];
+                    tblHtml.Append("<tr Name='" + name + "' FixedAssetNo='" + fixedAssetNo + "' MaterielID='" + materielID + "' >");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + fixedAssetNo + "</td>");
+                    tblHtml.Append("<td>" + name + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Price"] + "</td>");
+                    var status = ((dt.Rows[i]["Status"].ToString() == "0") ? "借用中" : (dt.Rows[i]["Status"].ToString() == "1") ? "在库" : "遗失");
+                    tblHtml.Append("<td>" + status + "</td>");
+                    var actions = string.Empty;
+                    if (status == "在库")
+                    {
+                        actions += "<a class='ml_20' href='javascript:void(0)' onclick=\"LoseFixedAsset(" + dt.Rows[i]["ID"] + "," + materielID + ",'" + fixedAssetNo + "')\">遗失</a>";
+                    }
+                    else
+                    {
+                        actions += "<a href='javascript:void(0)' title='"+ dt.Rows[i]["Remark"].ToString() + "'>悬浮查看遗失备注</a>";
+                    }
+                    tblHtml.Append("<td>" + actions + "</td>");
                     tblHtml.Append("</tr>");
                 }
             }

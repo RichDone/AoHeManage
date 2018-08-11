@@ -3947,7 +3947,7 @@ namespace AoHeManage.Dal
             strSql.AppendLine(" INSERT into materielstock(MaterielID,TotalStoreQuantity,UseQuantity,LoseQuantity,StockQuantity,BorrowQuantity)  ");
             strSql.AppendLine(" VALUES(@MaterielID,@StoreQuantity,0,0,@StoreQuantity,0)  ");
             strSql.AppendLine(" on DUPLICATE key update TotalStoreQuantity=TotalStoreQuantity+@StoreQuantity,StockQuantity=StockQuantity+@StoreQuantity; ");
-            strSql.AppendLine(" insert into fixedassetstock(ID,MaterielStockID,FixedAssetNo,Borrower,BorrowDate,ReturnDate,`Status`,Remark) ");
+            strSql.AppendLine(" insert into fixedassetstock(ID,MaterielID,FixedAssetNo,BorrowPeople,BorrowDate,ReturnDate,`Status`,Remark) ");
             strSql.AppendFormat(" select null,MaterielID,FixedAssetNo,'',null,null,1,'' from storemanage a inner join materiel b on a.MaterielID=b.ID where a.ID='{0}' and b.IsConsumable=0 ", ID);
             return DbHelperSQL.ExecuteSql(strSql.ToString());
         }
@@ -4022,6 +4022,67 @@ namespace AoHeManage.Dal
                 strSql.Append(" order by " + filedOrder);
             }
             return DbHelperSQL.Query(strSql.ToString());
+        }
+        #endregion
+
+        #region 固定资产库存明细
+        public DataSet GetFixedAssetStockList(int currentPage, int pageSize, string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select COUNT(1) as totalrow from fixedassetstock a ");
+            strSql.AppendLine(" inner join materiel c on a.MaterielID=c.ID ");
+            strSql.AppendFormat(" where 1=1 {0} ; ", strWhere);
+
+            strSql.AppendLine(" select a.*,c.`Name`,c.Price from fixedassetstock a ");
+            strSql.AppendLine(" inner join materiel c on a.MaterielID=c.ID ");
+            strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+            MySqlParameter[] parameters = {
+                        new MySqlParameter("@currentpage", MySqlDbType.Int16),
+                        new MySqlParameter("@pagesize", MySqlDbType.Int16)
+                        };
+            parameters[0].Value = currentPage;
+            parameters[1].Value = pageSize;
+            return DbHelperSQL.Query(strSql.ToString(), parameters);
+        }
+        public DataSet GetFixedAssetStockList(string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select a.*,c.`Name`,c.Price from fixedassetstock a ");
+            strSql.AppendLine(" inner join materiel c on a.MaterielID=c.ID ");
+            strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+        public void AutoUpdateStock(FixedAssetBorrow model)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" update fixedassetstock set `Status`=0,BorrowDate='{0}',BorrowPeople='{1}',ReturnDate='{2}' where MaterielID='{3}' and FixedAssetNo='{4}'; "
+                , model.BorrowDate,model.BorrowPeople,model.EstimateReturnDate,model.MaterielID,model.FixedAssetNo);
+            strSql.AppendFormat(" update materielstock set StockQuantity=StockQuantity-1,BorrowQuantity=BorrowQuantity+1 where MaterielID='{0}'; ", model.MaterielID);
+            DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+        public int ReturnFixedAsset(string ID,int materielID,string fixedAssetNo,DateTime actualReturnDate,string returnRemark)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" update fixedassetborrow set `Status`=1,ActualReturnDate='{0}',ReturnRemark='{1}' where ID='{2}'; ", actualReturnDate, returnRemark, ID);
+            strSql.AppendFormat(" update fixedassetstock set `Status`=1,BorrowDate=null,BorrowPeople='',ReturnDate=null where MaterielID='{0}' and FixedAssetNo='{1}'; ", materielID, fixedAssetNo);
+            strSql.AppendFormat(" update materielstock set StockQuantity=StockQuantity+1,BorrowQuantity=BorrowQuantity-1 where MaterielID='{0}'; ", materielID);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
+        }
+        public int LoseFixedAsset(string ID, int materielID, string fixedAssetNo, string loseRemark)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" update fixedassetstock set `Status`=2,BorrowDate=null,BorrowPeople='',ReturnDate=null,Remark='{2}' where MaterielID='{0}' and FixedAssetNo='{1}'; ", materielID, fixedAssetNo, loseRemark);
+            strSql.AppendFormat(" update materielstock set StockQuantity=StockQuantity-1,LoseQuantity=LoseQuantity+1 where MaterielID='{0}'; ", materielID);
+            return DbHelperSQL.ExecuteSql(strSql.ToString());
         }
         #endregion
     }

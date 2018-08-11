@@ -496,3 +496,15 @@
 .font_13 {
     font-size: 13px;
 }
+.popDialog {
+    z-index: 11;
+    color: black;
+    position: absolute;
+    width: 400px;
+    height: 180px;
+    display: none;
+    background-color: white;
+    font-size: 12px;
+    left: 300px;
+    border: 1px solid #63B8FF;
+}

@@ -16,5 +16,10 @@ namespace AoHeManage.Model
         /// 更新有些字段不需要更新
         /// </summary>
         public bool NoUpdate { get; set; }
+
+        /// <summary>
+        /// 是否是冗余字段，只是用来显示的作用
+        /// </summary>
+        public bool Redundant { get; set; }
     }
 }
