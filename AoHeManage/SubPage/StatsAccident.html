@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>日常记录</title>
+    <title>意外事件统计</title>
     <meta charset="utf-8" />
     <link href="../Css/style.css" rel="stylesheet" />
     <script src="../Script/jquery-1.4.2.min.js"></script>
@@ -12,7 +12,6 @@
         var sortfield = "";
         var sorttype = "";
         var saveflag = "";
-        var urlQueryDate = "";
         function setsort(_sortfield) {
             if (sortfield != _sortfield) {
                 sorttype = "asc";
@@ -60,12 +59,7 @@
             }
         }
         $(document).ready(function () {
-            //获取url参数
-            var urlParam_statsType = GetQueryString("statsType");
-            var urlParam_statsValue = GetQueryString("statsValue");
-            urlQueryDate = "&statsType=" + urlParam_statsType + "&statsValue=" + urlParam_statsValue;
-
-            var beginDate = new Date().AddMonths(-1).ToString("yyyy-MM-dd");
+            var beginDate = new Date().AddMonths(-6).ToString("yyyy-MM-dd");
             var endDate = new Date().ToString("yyyy-MM-dd");
             $("#beginDate").val(beginDate);
             $("#endDate").val(endDate);
@@ -74,69 +68,51 @@
         function getPage(currentpage) {
             var beginDate = $("#beginDate").val();
             var endDate = $("#endDate").val();
-            var name = $("#name").val();
-            var keyword = $("#keyword").val();
+            var statsType = $("#statsType").val();
             var pagesize = "15";
             if ($("#sel_pagesize").val() != "" && typeof ($("#sel_pagesize").val()) != "undefined") { pagesize = $("#sel_pagesize").val(); }
-            var querydata = urlQueryDate + "&keyword=" + keyword + "&name=" + name + "&beginDate=" + beginDate + "&endDate=" + endDate + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
+            var querydata = "&statsType=" + statsType + "&beginDate=" + beginDate + "&endDate=" + endDate + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
             $.ajax(
                 {
                     type: "GET",
-                    url: "../MainHandler.ashx?action=getRecordPage_DailyRecordInfo",
+                    url: "../MainHandler.ashx?action=getRecordPage_StatsAccident",
                     dataType: 'text',
                     data: encodeURI(querydata),
                     success: function (result) {
-                        $("#dailyRecord_tb").html(result);
+                        $("#stats_tb").html(result);
                         //设置iframe高度
                         var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
                         $("#iframInfo", window.parent.document).height(iframeHeight);
                     }
                 });
         }
-        function EditDailyRecord(ID) {
-            window.parent.ChangeIframe('AddDailyRecord', 'dailyRecordID=' + ID);
-        }
-        function DeleteDailyRecord(ID) {
-            if (confirm("确认删除该日常记录吗？")) {
-                var querydata = "&ID=" + ID;
-                $.ajax(
-                {
-                    type: "GET",
-                    url: "../MainHandler.ashx?action=DeleteDailyRecord",
-                    dataType: 'text',
-                    data: encodeURI(querydata),
-                    success: function (result) {
-                        if (result != null && result != "") {
-                            if (parseInt(result) > 0) {
-                                alert("删除日常记录成功！");
-                                getPage(1);
-                            }
-                            else {
-                                alert("删除日常记录异常，请重新操作！");
-                            }
-                        }
-                    }
-                });
-            }
+        function FollowDailyRecord(statsType, value) {
+            window.parent.ChangeIframe('Accident', 'statsType=' + statsType + '&statsValue=' + value);
         }
     </script>
 </head>
 <body>
     <div>
         <fieldset>
-            <legend><span class="field_leg">日常记录</span></legend>
+            <legend><span class="field_leg">意外事件统计</span></legend>
             <div class="select_where">
-                <span>姓名：</span>
-                <input type="text" id="name" class="smallInput" />
-                <span class="ml_40">关键字：</span>
-                <input type="text" id="keyword" class="smallInput" />
-                <span class="ml_40">查询日期：</span>
-                <input type="text" id="beginDate" class="Wdate" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
+                <span>查询日期：</span>
+                <input type="text" id="beginDate" class="Wdate smallInput" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
                 <span>至</span>
-                <input type="text" id="endDate" class="Wdate" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
+                <input type="text" id="endDate" class="Wdate smallInput" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
+                <span class="ml_40">统计维度：</span>
+                <select id="statsType" class="smallSelect">
+                    <option value="AccidentType">按事件类型</option>
+                    <option value="FloorID">按楼层</option>
+                    <option value="RoomNo">按房间</option>
+                    <option value="Name">按客人</option>
+                    <option value="Sex">按性别</option>
+                    <option value="Age">按年龄段</option>
+                    <option value="NurseLevel">按护理等级</option>
+                </select>
                 <span class="ml_50"><input class="selectBtn" type="button" value="查询" onclick="getPage(1)" /></span>
             </div>
-            <div id="dailyRecord_tb">
+            <div id="stats_tb">
             </div>
         </fieldset>
     </div>

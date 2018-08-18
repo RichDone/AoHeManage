@@ -149,6 +149,8 @@
     <Content Include="SubPage\AssessTemplate.html" />
     <Content Include="SubPage\BasicInfoManage.html" />
     <Content Include="SubPage\DailyRecord.html" />
+    <Content Include="SubPage\StatsAccident.html" />
+    <Content Include="SubPage\StatsDailyRecord.html" />
     <Content Include="SubPage\DailyRecordStats.html" />
     <Content Include="SubPage\EvaluateTemplate.html" />
     <Content Include="SubPage\FixedAssetBorrow.html" />
@@ -160,6 +162,7 @@
     <Content Include="SubPage\GuestNursePlan.html" />
     <Content Include="SubPage\Materiel.html" />
     <Content Include="SubPage\MaterielApply.html" />
+    <Content Include="SubPage\MaterielCheck.html" />
     <Content Include="SubPage\MaterielType.html" />
     <Content Include="SubPage\NurseProject.html" />
     <Content Include="SubPage\OtherWorkTime.html" />

@@ -12,6 +12,7 @@
         var sortfield = "";
         var sorttype = "";
         var saveflag = "";
+        var urlQueryDate = "";
         function setsort(_sortfield) {
             if (sortfield != _sortfield) {
                 sorttype = "asc";
@@ -59,50 +60,37 @@
             }
         }
         $(document).ready(function () {
-            var beginDate = new Date().AddMonths(-1).ToString("yyyy-MM-dd");
+            //获取url参数
+            var urlParam_statsType = GetQueryString("statsType");
+            var urlParam_statsValue = GetQueryString("statsValue");
+            urlQueryDate = "&statsType=" + urlParam_statsType + "&statsValue=" + urlParam_statsValue;
+
+            var beginDate = new Date().AddMonths(-6).ToString("yyyy-MM-dd");
             var endDate = new Date().ToString("yyyy-MM-dd");
             $("#beginDate").val(beginDate);
             $("#endDate").val(endDate);
-            InitAccidentType();
             getPage(1);
         });
         function getPage(currentpage) {
             var beginDate = $("#beginDate").val();
             var endDate = $("#endDate").val();
             var name = $("#name").val();
-            var accidentType = $("#accidentType").val();
             var pagesize = "15";
             if ($("#sel_pagesize").val() != "" && typeof ($("#sel_pagesize").val()) != "undefined") { pagesize = $("#sel_pagesize").val(); }
-            var querydata = "&name=" + name + "&accidentType=" + accidentType + "&beginDate=" + beginDate + "&endDate=" + endDate + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
+            var querydata = urlQueryDate + "&name=" + name + "&beginDate=" + beginDate + "&endDate=" + endDate + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
             $.ajax(
-            {
-                type: "GET",
-                url: "../MainHandler.ashx?action=getRecordPage_AccidentInfo",
-                dataType: 'text',
-                data: encodeURI(querydata),
-                success: function (result) {
-                    $("#accident_tb").html(result);
-                    //设置iframe高度
-                    var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
-                    $("#iframInfo", window.parent.document).height(iframeHeight + 100);
-                }
-            });
-        }
-        function InitAccidentType() {
-            $("#accidentType").empty();
-            var querydata = "&paramType=AccidentType";
-            $.ajax(
-           {
-               type: "GET",
-               url: "../MainHandler.ashx?action=InitSelect_ParamOption",
-               dataType: 'text',
-               data: encodeURI(querydata),
-               success: function (result) {
-                   if (result != null && result != "" && result.length > 0) {
-                       $("#accidentType").append(result);
-                   }
-               }
-           });
+                {
+                    type: "GET",
+                    url: "../MainHandler.ashx?action=getRecordPage_AccidentInfo",
+                    dataType: 'text',
+                    data: encodeURI(querydata),
+                    success: function (result) {
+                        $("#accident_tb").html(result);
+                        //设置iframe高度
+                        var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
+                        $("#iframInfo", window.parent.document).height(iframeHeight + 100);
+                    }
+                });
         }
         function FollowAccident(accidentID) {
             window.parent.ChangeIframe('AccidentFollwo', 'accidentID=' + accidentID);
@@ -146,8 +134,6 @@
                 <input type="text" id="beginDate" class="Wdate smallInput" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
                 <span>至</span>
                 <input type="text" id="endDate" class="Wdate smallInput" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
-                <span class="ml_40">意外类型：</span>
-                <select id="accidentType" class="smallSelect"></select>
                 <span class="ml_50"><input class="selectBtn" type="button" value="查询" onclick="getPage(1)"/></span>
             </div>
             <div id="accident_tb">

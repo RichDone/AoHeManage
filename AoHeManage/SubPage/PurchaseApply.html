@@ -66,9 +66,9 @@
         function getPage(currentpage) {
             ChangeShowPage('purchaseApply_list', 'purchaseApply_add');
             var pagesize = "15";
-            var quaryName = $("#quaryName").val();
+            var queryName = $("#queryName").val();
             if ($("#sel_pagesize").val() != "" && typeof ($("#sel_pagesize").val()) != "undefined") { pagesize = $("#sel_pagesize").val(); }
-            var querydata = "&quaryName=" + quaryName + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
+            var querydata = "&queryName=" + queryName + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
             $.ajax(
                 {
                     type: "GET",
@@ -303,6 +303,7 @@
             var quantity = $(obj).val();
             var totalPrice = (price * quantity).toFixed(2);
             $(obj).parent().parent().find(".purchasePrice").eq(0).val(totalPrice);
+            $(obj).parent().parent().find(".storingQuantity").eq(0).val(quantity);
         }
         function ChangeMateriel(obj) {
             var unit = $(obj).find("option:selected").attr("Unit");
@@ -318,7 +319,7 @@
             <legend><span class="field_leg">采购申请</span></legend>
             <div class="select_where">
                 <span>申请人搜索：</span>
-                <input type="text" id="quaryName" class="normalInput" />
+                <input type="text" id="queryName" class="normalInput" />
                 <span class="ml_50"><input class="selectBtn" type="button" value="查询" onclick="getPage(1)" /></span>
                 <span class="ml_50"><input class="selectBtn" type="button" value="新增" onclick="ShowInsertPage('add')" /></span>
             </div>

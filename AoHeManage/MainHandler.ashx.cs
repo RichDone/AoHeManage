@@ -46,23 +46,48 @@ namespace AoHeManage
                 string endDate = context.Request.Params["endDate"];
                 string name = context.Request.Params["name"];
                 string accidentType = context.Request.Params["accidentType"];
+                string statsType = context.Request.Params["statsType"];
+                string statsValue = context.Request.Params["statsValue"];
                 StringBuilder strWhere = new StringBuilder();
+                if (statsType != "null" && statsType != "undefined" && !string.IsNullOrWhiteSpace(statsType) && !string.IsNullOrWhiteSpace(statsValue))
+                {
+                    if (statsType == "AccidentType")
+                    {
+                        strWhere.AppendFormat(" and a.AccidentType = '{0}' ", statsValue);
+                    }
+                    else if (statsType == "Age")
+                    {
+                        if (statsValue == "50以下")
+                        {
+                            strWhere.Append(" and b.Age < 50 ");
+                        }
+                        else if (statsValue == "100以上")
+                        {
+                            strWhere.Append(" and b.Age >= 100 ");
+                        }
+                        else
+                        {
+                            string[] _age = statsValue.Split('-');
+                            strWhere.AppendFormat(" and b.Age >= '{0}' and b.Age<'{1}' ", _age[0], _age[1]);
+                        }
+                    }
+                    else
+                    {
+                        strWhere.AppendFormat(" and b.{0} = '{1}' ", statsType, statsValue);
+                    }
+                }
                 if (!string.IsNullOrWhiteSpace(name))
                 {
                     strWhere.AppendFormat(" and b.Name like '%{0}%' ", name);
                 }
-                if (!string.IsNullOrWhiteSpace(accidentType) && accidentType.ToUpper() != "NULL")
-                {
-                    strWhere.AppendFormat(" and a.AccidentType = '{0}' ", accidentType);
-                }
                 if (!string.IsNullOrWhiteSpace(beginDate))
                 {
-                    strWhere.AppendFormat(" and CreateOn>= '{0}' ", beginDate);
+                    strWhere.AppendFormat(" and a.CreateOn>= '{0}' ", beginDate);
                 }
                 if (!string.IsNullOrWhiteSpace(endDate))
                 {
                     endDate = Convert.ToDateTime(endDate).AddDays(1).ToString("yyyy-MM-dd");
-                    strWhere.AppendFormat(" and CreateOn< '{0}' ", endDate);
+                    strWhere.AppendFormat(" and a.CreateOn< '{0}' ", endDate);
                 }
                 result = getRecordPage_AccidentInfo(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
                 strWhere = null;
@@ -666,7 +691,39 @@ namespace AoHeManage
                 string endDate = context.Request.Params["endDate"];
                 string name = context.Request.Params["name"];
                 string keyword = context.Request.Params["keyword"];
+
+                string statsType = context.Request.Params["statsType"];
+                string statsValue = context.Request.Params["statsValue"];
+
                 StringBuilder strWhere = new StringBuilder();
+                if (statsType !="null"&& statsType != "undefined" && !string.IsNullOrWhiteSpace(statsType)&& !string.IsNullOrWhiteSpace(statsValue))
+                {
+                    if (statsType == "DailyRecordType")
+                    {
+                        strWhere.AppendFormat(" and a.DailyRecordType = '{0}' ", statsValue);
+                    }
+                    else if (statsType == "Age")
+                    {
+                        if (statsValue == "50以下")
+                        {
+                            strWhere.Append(" and b.Age < 50 ");
+                        }
+                        else if (statsValue == "100以上")
+                        {
+                            strWhere.Append(" and b.Age >= 100 ");
+                        }
+                        else
+                        {
+                            string[] _age = statsValue.Split('-');
+                            strWhere.AppendFormat(" and b.Age >= '{0}' and b.Age<'{1}' ", _age[0], _age[1]);
+                        }
+                    }
+                    else
+                    {
+                        strWhere.AppendFormat(" and b.{0} = '{1}' ", statsType, statsValue);
+                    }
+                }
+
                 if (!string.IsNullOrWhiteSpace(name))
                 {
                     strWhere.AppendFormat(" and b.Name like '%{0}%' ", name);
@@ -878,7 +935,7 @@ namespace AoHeManage
                 StringBuilder strWhere = new StringBuilder();
                 if (!string.IsNullOrWhiteSpace(name))
                 {
-                    strWhere.AppendFormat(" and c.Name like '%{0}%' ", name);
+                    strWhere.AppendFormat(" and b.Name like '%{0}%' ", name);
                 }
                 if (!string.IsNullOrWhiteSpace(dailyRecordType) && dailyRecordType != "null")
                 {
@@ -4725,10 +4782,10 @@ namespace AoHeManage
                 if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
                 if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
                 StringBuilder strWhere = new StringBuilder();
-                string quaryName = context.Request.Params["quaryName"];
-                if (!string.IsNullOrWhiteSpace(quaryName))
+                string queryName = context.Request.Params["queryName"];
+                if (!string.IsNullOrWhiteSpace(queryName))
                 {
-                    strWhere.AppendFormat(" and a.ApplyPeople like '%{0}%' ", quaryName);
+                    strWhere.AppendFormat(" and a.ApplyPeople like '%{0}%' ", queryName);
                 }
                 result = getRecordPage_PurchaseApply(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
                 strWhere = null;
@@ -5067,6 +5124,138 @@ namespace AoHeManage
                 }
                 strWhere.AppendFormat(" and a.`Status` in(1,2) ");
                 result = getRecordPage_FixedAssetStock(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 获取所有是否消耗品为是物料库存信息
+            if (action == "GetMaterielStockInfoForCheck")
+            {
+                var staff = dal.GetMaterielStockInfoForCheck();
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
+            #region 获取物料盘点列表
+            if (action == "getRecordPage_MaterielCheck")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                StringBuilder strWhere = new StringBuilder();
+                string queryName = context.Request.Params["queryName"];
+                string queryBeginDate = context.Request.Params["queryBeginDate"];
+                string queryEndDate = context.Request.Params["queryEndDate"];
+                if (!string.IsNullOrWhiteSpace(queryName) && queryName != "null")
+                {
+                    strWhere.AppendFormat(" and b.Name like '%{0}%' ", queryName);
+                }
+                if (!string.IsNullOrWhiteSpace(queryBeginDate))
+                {
+                    strWhere.AppendFormat(" and CheckDate>= '{0}' ", queryBeginDate);
+                }
+                if (!string.IsNullOrWhiteSpace(queryEndDate))
+                {
+                    queryEndDate = Convert.ToDateTime(queryEndDate).AddDays(1).ToString("yyyy-MM-dd");
+                    strWhere.AppendFormat(" and CheckDate< '{0}' ", queryEndDate);
+                }
+                result = getRecordPage_MaterielCheck(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 根据ID获取物料盘点
+            if (action == "GetMaterielCheckByID")
+            {
+                var ID = context.Request.Params["ID"];
+                var staff = dal.GetMaterielCheckByID(Convert.ToInt16(ID));
+                result = CommTools.ObjectToJson(staff);
+            }
+            #endregion
+
+            #region 保存物料盘点
+            if (action == "SaveMaterielCheck")
+            {
+                var saveflag = context.Request.Params["saveflag"];
+                var ID = context.Request.Params["ID"];
+                var checkPeople = context.Request.Params["checkPeople"];
+                var checkDate = context.Request.Params["checkDate"];
+                var status = context.Request.Params["status"];
+                var remark = context.Request.Params["remark"];
+                var details = context.Request.Params["details"];
+                List<MaterielCheckDetail> listMaterielCheckDetail = new List<MaterielCheckDetail>();
+                if (!string.IsNullOrWhiteSpace(details))
+                {
+                    listMaterielCheckDetail = CommTools.JsonToObject(details, typeof(List<MaterielCheckDetail>)) as List<MaterielCheckDetail>;
+                }
+                MaterielCheck model = new MaterielCheck();
+                model.CheckPeople = checkPeople;
+                model.CheckDate = Convert.ToDateTime(checkDate);
+                model.Remark = remark;
+                model.Status = Convert.ToInt16(status);
+                model.ListMaterielCheckDetail = listMaterielCheckDetail;
+                string excuteResult = string.Empty;
+                if (saveflag == "add")
+                {
+                    excuteResult = dal.AddMaterielCheck(model).ToString();
+
+                }
+                if (saveflag == "edit")
+                {
+                    model.ID = Convert.ToInt16(ID);
+                    excuteResult = dal.UpdateMaterielCheck(model).ToString();
+                }
+                result = excuteResult;
+            }
+            #endregion
+
+            #region 巡视记录统计
+            if (action == "getRecordPage_StatsDailyRecord")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                string beginDate = context.Request.Params["beginDate"];
+                string endDate = context.Request.Params["endDate"];
+                string statsType = context.Request.Params["statsType"];
+                StringBuilder strWhere = new StringBuilder();
+                if (!string.IsNullOrWhiteSpace(beginDate))
+                {
+                    strWhere.AppendFormat(" and a.CreateOn>= '{0}' ", beginDate);
+                }
+                if (!string.IsNullOrWhiteSpace(endDate))
+                {
+                    endDate = Convert.ToDateTime(endDate).AddDays(1).ToString("yyyy-MM-dd");
+                    strWhere.AppendFormat(" and a.CreateOn< '{0}' ", endDate);
+                }
+                result = getRecordPage_StatsDailyRecord(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype, statsType);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 意外事件统计
+            if (action == "getRecordPage_StatsAccident")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                string beginDate = context.Request.Params["beginDate"];
+                string endDate = context.Request.Params["endDate"];
+                string statsType = context.Request.Params["statsType"];
+                StringBuilder strWhere = new StringBuilder();
+                if (!string.IsNullOrWhiteSpace(beginDate))
+                {
+                    strWhere.AppendFormat(" and a.CreateOn>= '{0}' ", beginDate);
+                }
+                if (!string.IsNullOrWhiteSpace(endDate))
+                {
+                    endDate = Convert.ToDateTime(endDate).AddDays(1).ToString("yyyy-MM-dd");
+                    strWhere.AppendFormat(" and a.CreateOn< '{0}' ", endDate);
+                }
+                result = getRecordPage_StatsAccident(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype, statsType);
                 strWhere = null;
             }
             #endregion
@@ -8272,6 +8461,175 @@ namespace AoHeManage
                         actions += "<a href='javascript:void(0)' title='"+ dt.Rows[i]["Remark"].ToString() + "'>悬浮查看遗失备注</a>";
                     }
                     tblHtml.Append("<td>" + actions + "</td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 物料盘点列表
+        private string getRecordPage_MaterielCheck(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+            string sortname = " a.ID ";
+            string withRefundantColumn = "a.*,b.`Name`";
+            string withRefundantFrom = "materielcheck a inner join staffinfo b on a.CheckPeople=b.StaffNo";
+            DataSet ds = dalGlobal.GetPageingRecord<MaterielStockInfoForCheck>(currentpage, pagesize, where, sortname + sorttype, withRefundantColumn, withRefundantFrom);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_MaterielCheck(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_MaterielCheck(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:20%'>盘点日期</th>"
+                           + "<th style='width:20%'>盘点人</th>"
+                           + "<th style='width:10%'>状态</th>"
+                           + "<th style='width:30%'>备注</th>"
+                           + "<th style='width:10%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + (Convert.ToDateTime(dt.Rows[i]["CheckDate"]).ToString("yyyy-MM-dd")) + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Name"] + "</td>");
+                    var statusCode = dt.Rows[i]["Status"].ToString();
+                    var status = (statusCode == "0") ? "盘点中" : "盘点完成";
+                    tblHtml.Append("<td>" + status + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"ShowInsertPage('edit'," + dt.Rows[i]["ID"] + ")\">查看</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 巡视记录统计
+        private string getRecordPage_StatsDailyRecord(int currentpage, int pagesize, string where, string sortfield, string sorttype, string statsType)
+        {
+            StringBuilder dataPage = new StringBuilder();
+
+            string sortname = " OccurCount desc ";
+            DataSet ds = dal.GetStatsDailyRecord(currentpage, pagesize, where, sortname + sorttype, statsType);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_StatsDailyRecord(ds.Tables[1], sortfield, sorttype, statsType));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_StatsDailyRecord(DataTable dt, string sortfield, string sorttype, string statsType)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            var columnName = statsType == "DailyRecordType" ? "问题类型" : statsType == "FloorID" ? "楼层" : statsType == "RoomNo" ? "房间" :
+                statsType == "Name" ? "客人" : statsType == "Sex" ? "性别" : statsType == "Age" ? "年龄段" : statsType == "NurseLevel" ? "护理级别" : "";
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append(" <th style='width:20%'>序号</th>"
+                           + "<th style='width:30%'>"+ columnName + "</th>"
+                           + "<th style='width:20%'>发生次数</th>"
+                           + "<th style='width:30%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    var columnVal = (statsType == "Sex") ? ((dt.Rows[i][0].ToString() == "0") ? "男" : "女") : dt.Rows[i][0];
+                    tblHtml.Append("<td>" + columnVal + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i][1] + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"FollowDailyRecord('" + statsType + "','" + dt.Rows[i][0] + "')\">查看</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 意外事件统计
+        private string getRecordPage_StatsAccident(int currentpage, int pagesize, string where, string sortfield, string sorttype, string statsType)
+        {
+            StringBuilder dataPage = new StringBuilder();
+
+            string sortname = " OccurCount desc ";
+            DataSet ds = dal.GetStatsAccident(currentpage, pagesize, where, sortname + sorttype, statsType);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_StatsAccident(ds.Tables[1], sortfield, sorttype, statsType));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_StatsAccident(DataTable dt, string sortfield, string sorttype, string statsType)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            var columnName = statsType == "AccidentType" ? "事件类型" : statsType == "FloorID" ? "楼层" : statsType == "RoomNo" ? "房间" :
+                statsType == "Name" ? "客人" : statsType == "Sex" ? "性别" : statsType == "Age" ? "年龄段" : statsType == "NurseLevel" ? "护理级别" : "";
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append(" <th style='width:20%'>序号</th>"
+                           + "<th style='width:30%'>" + columnName + "</th>"
+                           + "<th style='width:20%'>发生次数</th>"
+                           + "<th style='width:30%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    var columnVal = (statsType == "Sex") ? ((dt.Rows[i][0].ToString() == "0") ? "男" : "女") : dt.Rows[i][0];
+                    tblHtml.Append("<td>" + columnVal + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i][1] + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"FollowDailyRecord('" + statsType + "','" + dt.Rows[i][0] + "')\">查看</a></td>");
                     tblHtml.Append("</tr>");
                 }
             }

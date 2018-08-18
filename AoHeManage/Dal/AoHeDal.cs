@@ -835,15 +835,15 @@ namespace AoHeManage.Dal
         {
             StringBuilder strSql = new StringBuilder();
             strSql.AppendLine(" select count(1) as totalrow from ( ");
-            strSql.AppendLine(" select c.`Name`,c.Sex,c.Age,c.RoomNo,c.BedNo,a.DailyRecordType,count(1) as OccurCount from dailyrecordinfo a ");
-            strSql.AppendLine(" inner join guestinfo c on a.GuestID = c.ID ");
+            strSql.AppendLine(" select b.`Name`,b.Sex,b.Age,b.RoomNo,b.BedNo,a.DailyRecordType,count(1) as OccurCount from dailyrecordinfo a ");
+            strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
             strSql.AppendFormat(" where 1=1 {0} ", strWhere);
-            strSql.AppendLine(" group by c.`Name`,c.Sex,c.Age,c.RoomNo,c.BedNo,a.DailyRecordType ) tempa; ");
+            strSql.AppendLine(" group by b.`Name`,b.Sex,b.Age,b.RoomNo,b.BedNo,a.DailyRecordType ) tempa; ");
 
-            strSql.AppendLine(" select c.`Name`,c.Sex,c.Age,c.RoomNo,c.BedNo,a.DailyRecordType,count(1) as OccurCount from dailyrecordinfo a ");
-            strSql.AppendLine(" inner join guestinfo c on a.GuestID = c.ID ");
+            strSql.AppendLine(" select b.`Name`,b.Sex,b.Age,b.RoomNo,b.BedNo,a.DailyRecordType,count(1) as OccurCount from dailyrecordinfo a ");
+            strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
             strSql.AppendFormat(" where 1=1 {0} ", strWhere);
-            strSql.AppendLine(" group by c.`Name`,c.Sex,c.Age,c.RoomNo,c.BedNo,a.DailyRecordType  ");
+            strSql.AppendLine(" group by b.`Name`,b.Sex,b.Age,b.RoomNo,b.BedNo,a.DailyRecordType  ");
 
             if (filedOrder.Trim() != "")
             {
@@ -4084,6 +4084,354 @@ namespace AoHeManage.Dal
             strSql.AppendFormat(" update materielstock set StockQuantity=StockQuantity-1,LoseQuantity=LoseQuantity+1 where MaterielID='{0}'; ", materielID);
             return DbHelperSQL.ExecuteSql(strSql.ToString());
         }
+        #endregion
+
+        #region 物料盘点
+        public List<MaterielStockInfoForCheck> GetMaterielStockInfoForCheck()
+        {
+            List<MaterielStockInfoForCheck> listModel = new List<MaterielStockInfoForCheck>();
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select a.MaterielID,b.`Name`,b.Unit,a.StockQuantity from materielstock a ");
+            strSql.AppendLine(" inner join materiel b on a.MaterielID=b.ID ");
+            strSql.AppendLine(" where b.IsConsumable=1 ");
+            DataSet ds = new DataSet();
+            ds = DbHelperSQL.Query(strSql.ToString());
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    MaterielStockInfoForCheck model = new MaterielStockInfoForCheck();
+                    var row = ds.Tables[0].Rows[i];
+                    model.MaterielID = Convert.ToInt16(row["MaterielID"]);
+                    model.NotionalQuantity = Convert.ToInt16(row["StockQuantity"]);
+                    model.Unit = row["Unit"].ToString();
+                    model.MaterielName = row["Name"].ToString();
+                    listModel.Add(model);
+                }
+            }
+            return listModel;
+        }
+        public int AddMaterielCheck(MaterielCheck model)
+        {
+            List<String> sqlList = new List<string>();
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" insert into materielcheck(ID,CheckPeople,CheckDate,Status,Remark) values ");
+            strSql.AppendFormat(" (null,'{0}','{1}','{2}','{3}'); ", model.CheckPeople, model.CheckDate,model.Status, model.Remark);
+            sqlList.Add(strSql.ToString());
+            foreach (var item in model.ListMaterielCheckDetail)
+            {
+                strSql = new StringBuilder();
+                strSql.AppendLine(" insert into materielcheckdetail(ID,MaterielCheckID,MaterielID,Unit,NotionalQuantity,ActualQuantity,DiffQuantity,Remark) values ");
+                strSql.AppendFormat(" (null,(select a.ID from (select MAX(ID) as ID from materielcheck) a),'{0}','{1}','{2}','{3}','{4}','{5}' ); ",
+                    item.MaterielID, item.Unit, item.NotionalQuantity, item.ActualQuantity, item.DiffQuantity, item.Remark);
+                if (model.Status == 1)
+                {
+                    strSql.AppendFormat(" update materielstock set StockQuantity=StockQuantity-{1},LoseQuantity=LoseQuantity+{1} where MaterielID='{0}'; ", item.MaterielID, item.DiffQuantity);
+                }
+                sqlList.Add(strSql.ToString());
+            }
+            return DbHelperSQL.ExecuteSqlTran(sqlList);
+        }
+
+        public int UpdateMaterielCheck(MaterielCheck model)
+        {
+            List<String> sqlList = new List<string>();
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendFormat(" update materielcheck set CheckPeople='{0}',CheckDate='{1}',Status='{2}',Remark='{3}' ", model.CheckPeople, model.CheckDate, model.Status, model.Remark);
+            strSql.AppendFormat(" where ID='{0}'; ", model.ID);
+            sqlList.Add(strSql.ToString());
+            strSql = new StringBuilder();
+            strSql.AppendFormat(" delete from materielcheckdetail where MaterielCheckID='{0}'; ", model.ID);
+            sqlList.Add(strSql.ToString());
+            foreach (var item in model.ListMaterielCheckDetail)
+            {
+                strSql = new StringBuilder();
+                strSql.AppendLine(" insert into materielcheckdetail(ID,MaterielCheckID,MaterielID,Unit,NotionalQuantity,ActualQuantity,DiffQuantity,Remark) values ");
+                strSql.AppendFormat(" (null,'{0}','{1}','{2}','{3}','{4}','{5}','{6}' ); ",
+                    model.ID, item.MaterielID, item.Unit, item.NotionalQuantity, item.ActualQuantity, item.DiffQuantity, item.Remark);
+                if (model.Status == 1)
+                {
+                    strSql.AppendFormat(" update materielstock set StockQuantity=StockQuantity-{1},LoseQuantity=LoseQuantity+{1} where MaterielID='{0}'; ", item.MaterielID, item.DiffQuantity);
+                }
+                sqlList.Add(strSql.ToString());
+            }
+            return DbHelperSQL.ExecuteSqlTran(sqlList);
+        }
+        public MaterielCheck GetMaterielCheckByID(int ID)
+        {
+            MaterielCheck model = new MaterielCheck();
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine(" select a.ID,CheckPeople,CheckDate,a.Status,a.Remark, ");
+            strSql.AppendLine(" b.ID as DetailID,MaterielCheckID,b.MaterielID,c.`Name` as MaterielName,b.Unit,NotionalQuantity,ActualQuantity,DiffQuantity,b.Remark as DetailRemark ");
+            strSql.AppendFormat(" from materielcheck a left join materielcheckdetail b on a.ID=b.MaterielCheckID inner join materiel c on b.MaterielID=c.ID where a.ID ='{0}' order by b.ID ", ID);
+            DataSet ds = new DataSet();
+            ds = DbHelperSQL.Query(strSql.ToString());
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                var row_0 = ds.Tables[0].Rows[0];
+                model.ID = ID;
+                model.CheckPeople = row_0["CheckPeople"].ToString();
+                model.CheckDate = Convert.ToDateTime(row_0["CheckDate"]);
+                model.Status = Convert.ToInt16(row_0["Status"]);
+                model.Remark = row_0["Remark"].ToString();
+                List<MaterielCheckDetail> details = new List<MaterielCheckDetail>();
+                for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+                {
+                    var row = ds.Tables[0].Rows[i];
+                    if (row["DetailID"] == DBNull.Value)
+                    {
+                        continue;
+                    }
+                    details.Add(new MaterielCheckDetail()
+                    {
+                        ID = Convert.ToInt16(row["DetailID"]),
+                        MaterielCheckID = Convert.ToInt16(row["MaterielCheckID"]),
+                        MaterielID = Convert.ToInt16(row["MaterielID"]),
+                        Unit = row["Unit"].ToString(),
+                        MaterielName = row["MaterielName"].ToString(),
+                        NotionalQuantity = Convert.ToInt16(row["NotionalQuantity"]),
+                        ActualQuantity = Convert.ToInt16(row["ActualQuantity"]),
+                        DiffQuantity = Convert.ToInt16(row["DiffQuantity"]),
+                        Remark = row["DetailRemark"].ToString()
+                    });
+                }
+                model.ListMaterielCheckDetail = details;
+            }
+            return model;
+        }
+        #endregion
+
+        #region 查询统计
+        public DataSet GetStatsDailyRecord(int currentPage, int pageSize, string strWhere, string filedOrder, string statsType)
+        {
+            StringBuilder strSql = new StringBuilder();
+            switch (statsType)
+            {
+                case "DailyRecordType":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select a.DailyRecordType,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by a.DailyRecordType ) tempa; ");
+
+                    strSql.AppendLine(" select a.DailyRecordType,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by a.DailyRecordType  ");
+                    break;
+                case "FloorID":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.FloorID,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.FloorID ) tempa; ");
+
+                    strSql.AppendLine(" select b.FloorID,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.FloorID  ");
+                    break;
+                case "RoomNo":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.RoomNo,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.RoomNo ) tempa; ");
+
+                    strSql.AppendLine(" select b.RoomNo,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.RoomNo  ");
+                    break;
+                case "Sex":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.Sex,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.Sex ) tempa; ");
+
+                    strSql.AppendLine(" select b.Sex,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.Sex  ");
+                    break;
+                case "NurseLevel":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.NurseLevel,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.NurseLevel ) tempa; ");
+
+                    strSql.AppendLine(" select b.NurseLevel,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.NurseLevel  ");
+                    break;
+                case "Name":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.Name,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.Name ) tempa; ");
+
+                    strSql.AppendLine(" select b.Name,count(1) as OccurCount from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.Name  ");
+                    break;
+                case "Age":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select AgeScope,count(1) as OccurCount from ( ");
+                    strSql.AppendLine(" select (case	when b.Age<50 then '50以下' ");
+                    strSql.AppendLine(" 			when b.Age>=50 and b.Age<60 then '50-59'  ");
+                    strSql.AppendLine(" 			when b.Age>=60 and b.Age<70 then '60-69' ");
+                    strSql.AppendLine(" 			when b.Age>=70 and b.Age<80 then '70-79' ");
+                    strSql.AppendLine(" 			when b.Age>=80 and b.Age<90 then '80-89' ");
+                    strSql.AppendLine(" 			when b.Age>=90 and b.Age<100 then '90-99' ");
+                    strSql.AppendLine(" 			else '100以上' end) as AgeScope            ");
+                    strSql.AppendLine(" from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ) a ", strWhere);
+                    strSql.AppendLine(" group by AgeScope ) tempa; ");
+
+                    strSql.AppendLine(" select AgeScope,count(1) as OccurCount from ( ");
+                    strSql.AppendLine(" select (case	when b.Age<50 then '50以下' ");
+                    strSql.AppendLine(" 			when b.Age>=50 and b.Age<60 then '50-59'  ");
+                    strSql.AppendLine(" 			when b.Age>=60 and b.Age<70 then '60-69' ");
+                    strSql.AppendLine(" 			when b.Age>=70 and b.Age<80 then '70-79' ");
+                    strSql.AppendLine(" 			when b.Age>=80 and b.Age<90 then '80-89' ");
+                    strSql.AppendLine(" 			when b.Age>=90 and b.Age<100 then '90-99' ");
+                    strSql.AppendLine(" 			else '100以上' end) as AgeScope            ");
+                    strSql.AppendLine(" from dailyrecordinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ) a ", strWhere);
+                    strSql.AppendLine(" group by AgeScope  ");
+                    break;
+                default:
+                    break;
+            }
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+
+        public DataSet GetStatsAccident(int currentPage, int pageSize, string strWhere, string filedOrder, string statsType)
+        {
+            StringBuilder strSql = new StringBuilder();
+            switch (statsType)
+            {
+                case "AccidentType":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select a.AccidentType,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by a.AccidentType ) tempa; ");
+
+                    strSql.AppendLine(" select a.AccidentType,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by a.AccidentType  ");
+                    break;
+                case "FloorID":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.FloorID,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.FloorID ) tempa; ");
+
+                    strSql.AppendLine(" select b.FloorID,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.FloorID  ");
+                    break;
+                case "RoomNo":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.RoomNo,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.RoomNo ) tempa; ");
+
+                    strSql.AppendLine(" select b.RoomNo,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.RoomNo  ");
+                    break;
+                case "Sex":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.Sex,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.Sex ) tempa; ");
+
+                    strSql.AppendLine(" select b.Sex,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.Sex  ");
+                    break;
+                case "NurseLevel":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.NurseLevel,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.NurseLevel ) tempa; ");
+
+                    strSql.AppendLine(" select b.NurseLevel,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.NurseLevel  ");
+                    break;
+                case "Name":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.Name,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.Name ) tempa; ");
+
+                    strSql.AppendLine(" select b.Name,count(1) as OccurCount from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by b.Name  ");
+                    break;
+                case "Age":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select AgeScope,count(1) as OccurCount from ( ");
+                    strSql.AppendLine(" select (case	when b.Age<50 then '50以下' ");
+                    strSql.AppendLine(" 			when b.Age>=50 and b.Age<60 then '50-59'  ");
+                    strSql.AppendLine(" 			when b.Age>=60 and b.Age<70 then '60-69' ");
+                    strSql.AppendLine(" 			when b.Age>=70 and b.Age<80 then '70-79' ");
+                    strSql.AppendLine(" 			when b.Age>=80 and b.Age<90 then '80-89' ");
+                    strSql.AppendLine(" 			when b.Age>=90 and b.Age<100 then '90-99' ");
+                    strSql.AppendLine(" 			else '100以上' end) as AgeScope            ");
+                    strSql.AppendLine(" from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ) a ", strWhere);
+                    strSql.AppendLine(" group by AgeScope ) tempa; ");
+
+                    strSql.AppendLine(" select AgeScope,count(1) as OccurCount from ( ");
+                    strSql.AppendLine(" select (case	when b.Age<50 then '50以下' ");
+                    strSql.AppendLine(" 			when b.Age>=50 and b.Age<60 then '50-59'  ");
+                    strSql.AppendLine(" 			when b.Age>=60 and b.Age<70 then '60-69' ");
+                    strSql.AppendLine(" 			when b.Age>=70 and b.Age<80 then '70-79' ");
+                    strSql.AppendLine(" 			when b.Age>=80 and b.Age<90 then '80-89' ");
+                    strSql.AppendLine(" 			when b.Age>=90 and b.Age<100 then '90-99' ");
+                    strSql.AppendLine(" 			else '100以上' end) as AgeScope            ");
+                    strSql.AppendLine(" from accidentinfo a ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID = b.ID ");
+                    strSql.AppendFormat(" where 1=1 {0} ) a ", strWhere);
+                    strSql.AppendLine(" group by AgeScope  ");
+                    break;
+                default:
+                    break;
+            }
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+
         #endregion
     }
 }

@@ -99,3 +99,71 @@ Global捕获到未处理异常：System.FormatException
    在 System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
    在 System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
 
+2018-08-19 00:22:37
+Global捕获到未处理异常：System.Xml.XmlException
+异常信息：不能将值“”作为类型“Int32”来分析。
+异常堆栈：   在 System.Runtime.Serialization.Json.XmlJsonReader.ParseInt(String value, NumberStyles style)
+   在 System.Runtime.Serialization.Json.XmlJsonReader.ReadContentAsInt()
+   在 System.Xml.XmlDictionaryReader.ReadElementContentAsInt()
+   在 ReadMaterielCheckDetailFromJson(XmlReaderDelegator , XmlObjectSerializerReadContextComplexJson , XmlDictionaryString , XmlDictionaryString[] )
+   在 System.Runtime.Serialization.Json.JsonClassDataContract.ReadJsonValueCore(XmlReaderDelegator jsonReader, XmlObjectSerializerReadContextComplexJson context)
+   在 System.Runtime.Serialization.Json.JsonDataContract.ReadJsonValue(XmlReaderDelegator jsonReader, XmlObjectSerializerReadContextComplexJson context)
+   在 System.Runtime.Serialization.Json.XmlObjectSerializerReadContextComplexJson.ReadDataContractValue(DataContract dataContract, XmlReaderDelegator reader)
+   在 System.Runtime.Serialization.XmlObjectSerializerReadContext.InternalDeserialize(XmlReaderDelegator reader, String name, String ns, Type declaredType, DataContract& dataContract)
+   在 System.Runtime.Serialization.XmlObjectSerializerReadContextComplex.InternalDeserialize(XmlReaderDelegator xmlReader, Int32 declaredTypeID, RuntimeTypeHandle declaredTypeHandle, String name, String ns)
+   在 ReadArrayOfMaterielCheckDetailFromJson(XmlReaderDelegator , XmlObjectSerializerReadContextComplexJson , XmlDictionaryString , XmlDictionaryString , CollectionDataContract )
+   在 System.Runtime.Serialization.Json.JsonCollectionDataContract.ReadJsonValueCore(XmlReaderDelegator jsonReader, XmlObjectSerializerReadContextComplexJson context)
+   在 System.Runtime.Serialization.Json.JsonDataContract.ReadJsonValue(XmlReaderDelegator jsonReader, XmlObjectSerializerReadContextComplexJson context)
+   在 System.Runtime.Serialization.Json.XmlObjectSerializerReadContextComplexJson.ReadDataContractValue(DataContract dataContract, XmlReaderDelegator reader)
+   在 System.Runtime.Serialization.XmlObjectSerializerReadContext.InternalDeserialize(XmlReaderDelegator reader, String name, String ns, Type declaredType, DataContract& dataContract)
+   在 System.Runtime.Serialization.XmlObjectSerializerReadContextComplex.InternalDeserialize(XmlReaderDelegator xmlReader, Type declaredType, DataContract dataContract, String name, String ns)
+   在 System.Runtime.Serialization.Json.DataContractJsonSerializer.InternalReadObject(XmlReaderDelegator xmlReader, Boolean verifyObjectName)
+   在 System.Runtime.Serialization.XmlObjectSerializer.InternalReadObject(XmlReaderDelegator reader, Boolean verifyObjectName, DataContractResolver dataContractResolver)
+   在 System.Runtime.Serialization.XmlObjectSerializer.ReadObjectHandleExceptions(XmlReaderDelegator reader, Boolean verifyObjectName, DataContractResolver dataContractResolver)
+
+2018-08-19 00:24:49
+Global捕获到未处理异常：System.Xml.XmlException
+异常信息：不能将值“”作为类型“Int32”来分析。
+异常堆栈：   在 System.Runtime.Serialization.Json.XmlJsonReader.ParseInt(String value, NumberStyles style)
+   在 System.Runtime.Serialization.Json.XmlJsonReader.ReadContentAsInt()
+   在 System.Xml.XmlDictionaryReader.ReadElementContentAsInt()
+   在 ReadMaterielCheckDetailFromJson(XmlReaderDelegator , XmlObjectSerializerReadContextComplexJson , XmlDictionaryString , XmlDictionaryString[] )
+   在 System.Runtime.Serialization.Json.JsonClassDataContract.ReadJsonValueCore(XmlReaderDelegator jsonReader, XmlObjectSerializerReadContextComplexJson context)
+   在 System.Runtime.Serialization.Json.JsonDataContract.ReadJsonValue(XmlReaderDelegator jsonReader, XmlObjectSerializerReadContextComplexJson context)
+   在 System.Runtime.Serialization.Json.XmlObjectSerializerReadContextComplexJson.ReadDataContractValue(DataContract dataContract, XmlReaderDelegator reader)
+   在 System.Runtime.Serialization.XmlObjectSerializerReadContext.InternalDeserialize(XmlReaderDelegator reader, String name, String ns, Type declaredType, DataContract& dataContract)
+   在 System.Runtime.Serialization.XmlObjectSerializerReadContextComplex.InternalDeserialize(XmlReaderDelegator xmlReader, Int32 declaredTypeID, RuntimeTypeHandle declaredTypeHandle, String name, String ns)
+   在 ReadArrayOfMaterielCheckDetailFromJson(XmlReaderDelegator , XmlObjectSerializerReadContextComplexJson , XmlDictionaryString , XmlDictionaryString , CollectionDataContract )
+   在 System.Runtime.Serialization.Json.JsonCollectionDataContract.ReadJsonValueCore(XmlReaderDelegator jsonReader, XmlObjectSerializerReadContextComplexJson context)
+   在 System.Runtime.Serialization.Json.JsonDataContract.ReadJsonValue(XmlReaderDelegator jsonReader, XmlObjectSerializerReadContextComplexJson context)
+   在 System.Runtime.Serialization.Json.XmlObjectSerializerReadContextComplexJson.ReadDataContractValue(DataContract dataContract, XmlReaderDelegator reader)
+   在 System.Runtime.Serialization.XmlObjectSerializerReadContext.InternalDeserialize(XmlReaderDelegator reader, String name, String ns, Type declaredType, DataContract& dataContract)
+   在 System.Runtime.Serialization.XmlObjectSerializerReadContextComplex.InternalDeserialize(XmlReaderDelegator xmlReader, Type declaredType, DataContract dataContract, String name, String ns)
+   在 System.Runtime.Serialization.Json.DataContractJsonSerializer.InternalReadObject(XmlReaderDelegator xmlReader, Boolean verifyObjectName)
+   在 System.Runtime.Serialization.XmlObjectSerializer.InternalReadObject(XmlReaderDelegator reader, Boolean verifyObjectName, DataContractResolver dataContractResolver)
+   在 System.Runtime.Serialization.XmlObjectSerializer.ReadObjectHandleExceptions(XmlReaderDelegator reader, Boolean verifyObjectName, DataContractResolver dataContractResolver)
+
+2018-08-19 01:00:38
+Global捕获到未处理异常：System.Web.HttpException
+异常信息：远程主机关闭了连接。错误代码是 0x80070057。
+异常堆栈：   在 System.Web.Hosting.IIS7WorkerRequest.RaiseCommunicationError(Int32 result, Boolean throwOnDisconnect)
+   在 System.Web.Hosting.IIS7WorkerRequest.ExplicitFlush()
+   在 System.Web.HttpResponse.Flush(Boolean finalFlush, Boolean async)
+   在 System.Web.HttpResponse.Flush()
+   在 AoHeManage.MainHandler.ProcessRequest(HttpContext context) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\MainHandler.ashx.cs:行号 5157
+   在 System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   在 System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   在 System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+
+2018-08-19 02:35:25
+Global捕获到未处理异常：System.Exception
+异常信息：You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'a.DailyRecordType  
+ order by  OccurCount desc  LIMIT 0,15' at line 2
+异常堆栈：   在 AoHeManage.Common.DbHelperSQL.Query(String SQLString) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\Common\DbHelperSQL.cs:行号 500
+   在 AoHeManage.Dal.AoHeDal.GetDailyRecordAllStats(Int32 currentPage, Int32 pageSize, String strWhere, String filedOrder, String statsType) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\Dal\AoHeDal.cs:行号 4317
+   在 AoHeManage.MainHandler.getRecordPage_DailyRecordAllStats(Int32 currentpage, Int32 pagesize, String where, String sortfield, String sorttype, String statsType) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\MainHandler.ashx.cs:行号 8456
+   在 AoHeManage.MainHandler.ProcessRequest(HttpContext context) 位置 J:\Git-AoHe\AoHeManage\AoHeManage\MainHandler.ashx.cs:行号 5176
+   在 System.Web.HttpApplication.CallHandlerExecutionStep.System.Web.HttpApplication.IExecutionStep.Execute()
+   在 System.Web.HttpApplication.ExecuteStepImpl(IExecutionStep step)
+   在 System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
+

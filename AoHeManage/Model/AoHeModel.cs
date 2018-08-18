@@ -1232,7 +1232,7 @@ namespace AoHeManage.Model
         private string _borrowremark;
         private string _returnremark;
 
-        [Custom(Redundant =true)]
+        [Custom(Redundant = true)]
         public string MaterielName { get; set; }
         [Custom(Redundant = true)]
         public string BorrowName { get; set; }
@@ -1310,5 +1310,146 @@ namespace AoHeManage.Model
             get { return _returnremark; }
         }
     }
+    public class MaterielCheck
+    {
+        private int _id;
+        private string _checkpeople;
+        private DateTime _checkdate;
+        private string _remark;
+        private int _status;
+        public List<MaterielCheckDetail> ListMaterielCheckDetail { get; set; }
 
+        [Custom(Redundant = true)]
+        public string CheckName { get; set; }
+        /// <summary>
+        /// auto_increment
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string CheckPeople
+        {
+            set { _checkpeople = value; }
+            get { return _checkpeople; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime CheckDate
+        {
+            set { _checkdate = value; }
+            get { return _checkdate; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Status
+        {
+            set { _status = value; }
+            get { return _status; }
+        }
+
+    }
+
+    public class MaterielCheckDetail
+    {
+        private int _id;
+        private int _materielcheckid;
+        private int _materielid;
+        private string _unit;
+        private int _notionalquantity;
+        private int _actualquantity;
+        private int _diffquantity;
+        private string _remark;
+
+        [Custom(Redundant = true)]
+        public string MaterielName { get; set; }
+        /// <summary>
+        /// auto_increment
+        /// </summary>
+        public int ID
+        {
+            set { _id = value; }
+            get { return _id; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int MaterielCheckID
+        {
+            set { _materielcheckid = value; }
+            get { return _materielcheckid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int MaterielID
+        {
+            set { _materielid = value; }
+            get { return _materielid; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Unit
+        {
+            set { _unit = value; }
+            get { return _unit; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int NotionalQuantity
+        {
+            set { _notionalquantity = value; }
+            get { return _notionalquantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ActualQuantity
+        {
+            set { _actualquantity = value; }
+            get { return _actualquantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public int DiffQuantity
+        {
+            set { _diffquantity = value; }
+            get { return _diffquantity; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Remark
+        {
+            set { _remark = value; }
+            get { return _remark; }
+        }
+
+    }
+
+    public class MaterielStockInfoForCheck
+    {
+        public int MaterielID { get; set; }
+        public string MaterielName { get; set; }
+        public int NotionalQuantity { get; set; }
+        public string Unit{ get; set; }
+
+    }
 }
