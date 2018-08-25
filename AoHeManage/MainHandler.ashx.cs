@@ -4046,6 +4046,23 @@ namespace AoHeManage
                 if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
                 StringBuilder strWhere = new StringBuilder();
                 string queryName = context.Request.Params["queryName"];
+                string statsType = context.Request.Params["statsType"];
+                string statsValue = context.Request.Params["statsValue"];
+                if (statsType != "null" && statsType != "undefined" && !string.IsNullOrWhiteSpace(statsType) && !string.IsNullOrWhiteSpace(statsValue))
+                {
+                    if (statsType == "Product")
+                    {
+                        strWhere.AppendFormat(" and d.ProductID = '{0}' ", statsValue);
+                    }
+                    else if (statsType == "Staff")
+                    {
+                        strWhere.AppendFormat(" and c.ServiceStaff = '{0}' ", statsValue);
+                    }
+                    else if (statsType == "Guest")
+                    {
+                        strWhere.AppendFormat(" and a.GuestID = '{0}' ", statsValue);
+                    }
+                }
                 if (!string.IsNullOrWhiteSpace(queryName))
                 {
                     strWhere.AppendFormat(" and b.Name like '%{0}%' ", queryName);
@@ -4181,7 +4198,7 @@ namespace AoHeManage
                     for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
                     {
                         var row = ds.Tables[0].Rows[i];
-                        strOpt.AppendFormat("<option value='{0}' ServiceStaff='{3}' ProductName='{2}'>{1}</option>", row["ID"],
+                        strOpt.AppendFormat("<option value='{0}' ServiceStaff='{3}' ProductName='{2}'>{1}  {3}</option>", row["ID"],
                           Convert.ToDateTime(row["ServiceDate"]).ToString("yyyy-MM-dd"), row["ProductName"], row["Name"]);
                     }
                 }
@@ -5256,6 +5273,88 @@ namespace AoHeManage
                     strWhere.AppendFormat(" and a.CreateOn< '{0}' ", endDate);
                 }
                 result = getRecordPage_StatsAccident(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype, statsType);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 客人评估统计
+            if (action == "getRecordPage_StatsGuestEvaluation")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                string statsType = context.Request.Params["statsType"];
+                StringBuilder strWhere = new StringBuilder();
+                result = getRecordPage_StatsGuestEvaluation(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype, statsType);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 获取固定资产清单列表
+            if (action == "getRecordPage_FixedAssetInventory")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                string fixedAssetName = context.Request.Params["fixedAssetName"];
+                string fixedAssetNo = context.Request.Params["fixedAssetNo"];
+                string status = context.Request.Params["status"];
+
+                string statsType = context.Request.Params["statsType"];
+                string statsValue = context.Request.Params["statsValue"];
+
+                StringBuilder strWhere = new StringBuilder();
+                if (statsType != "null" && statsType != "undefined" && !string.IsNullOrWhiteSpace(statsType) && !string.IsNullOrWhiteSpace(statsValue))
+                {
+                    if (statsType == "MaterielID")
+                    {
+                        strWhere.AppendFormat(" and a.MaterielID = '{0}' ", statsValue);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(fixedAssetName))
+                {
+                    strWhere.AppendFormat(" and b.Name like '%{0}%' ", fixedAssetName);
+                }
+                if (!string.IsNullOrWhiteSpace(fixedAssetNo))
+                {
+                    strWhere.AppendFormat(" and a.FixedAssetNo = '{0}' ", fixedAssetNo);
+                }
+                if (!string.IsNullOrWhiteSpace(status))
+                {
+                    strWhere.AppendFormat(" and a.Status = '{0}' ", status);
+                }
+                result = getRecordPage_FixedAssetInventory(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
+                strWhere = null;
+            }
+            #endregion
+
+            #region 获取物料清单列表
+            if (action == "getRecordPage_MaterielInventory")
+            {
+                int m_currentpage = 1;
+                int m_pagesize = 15;
+                if (currentpage != null && currentpage != "" && currentpage != "undefined") { m_currentpage = int.Parse(currentpage); }
+                if (pagesize != null && pagesize != "" && pagesize != "undefined") { m_pagesize = int.Parse(pagesize); }
+                string ifStock = context.Request.Params["ifStock"];
+                string ifBorrow = context.Request.Params["ifBorrow"];
+                string materielName = context.Request.Params["materielName"];
+                StringBuilder strWhere = new StringBuilder();
+                if (!string.IsNullOrWhiteSpace(materielName))
+                {
+                    strWhere.AppendFormat(" and b.Name like '%{0}%' ", materielName);
+                }
+                if (!string.IsNullOrWhiteSpace(ifStock) && ifStock == "true")
+                {
+                    strWhere.Append(" and a.StockQuantity >0 ");
+                }
+                if (!string.IsNullOrWhiteSpace(ifBorrow) && ifBorrow == "true")
+                {
+                    strWhere.Append(" and a.BorrowQuantity >0 ");
+                }
+                result = getRecordPage_MaterielInventory(m_currentpage, m_pagesize, strWhere.ToString(), sortfield, sorttype);
                 strWhere = null;
             }
             #endregion
@@ -8574,7 +8673,7 @@ namespace AoHeManage
                     var columnVal = (statsType == "Sex") ? ((dt.Rows[i][0].ToString() == "0") ? "男" : "女") : dt.Rows[i][0];
                     tblHtml.Append("<td>" + columnVal + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i][1] + "</td>");
-                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"FollowDailyRecord('" + statsType + "','" + dt.Rows[i][0] + "')\">查看</a></td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"FollowDetailInfo('" + statsType + "','" + dt.Rows[i][0] + "')\">查看</a></td>");
                     tblHtml.Append("</tr>");
                 }
             }
@@ -8629,7 +8728,190 @@ namespace AoHeManage
                     var columnVal = (statsType == "Sex") ? ((dt.Rows[i][0].ToString() == "0") ? "男" : "女") : dt.Rows[i][0];
                     tblHtml.Append("<td>" + columnVal + "</td>");
                     tblHtml.Append("<td>" + dt.Rows[i][1] + "</td>");
-                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"FollowDailyRecord('" + statsType + "','" + dt.Rows[i][0] + "')\">查看</a></td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"FollowDetailInfo('" + statsType + "','" + dt.Rows[i][0] + "')\">查看</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 客人评估统计
+        private string getRecordPage_StatsGuestEvaluation(int currentpage, int pagesize, string where, string sortfield, string sorttype, string statsType)
+        {
+            StringBuilder dataPage = new StringBuilder();
+
+            string sortname = " OccurCount desc ";
+            DataSet ds = dal.GetStatsGuestEvaluation(currentpage, pagesize, where, sortname + sorttype, statsType);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_StatsGuestEvaluation(ds.Tables[1], sortfield, sorttype, statsType));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_StatsGuestEvaluation(DataTable dt, string sortfield, string sorttype, string statsType)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            var columnName = statsType == "Product" ? "产品" : statsType == "Staff" ? "员工" : statsType == "Guest" ? "客人" : "";
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append(" <th style='width:20%'>序号</th>"
+                           + "<th style='width:30%'>" + columnName + "</th>"
+                           + "<th style='width:20%'>发生次数</th>"
+                           + "<th style='width:30%'>操作</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i][0] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i][1] + "</td>");
+                    tblHtml.Append("<td><a href='javascript:void(0)' onclick=\"FollowDetailInfo('" + statsType + "','" + dt.Rows[i][2] + "')\">查看</a></td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 固定资产清单列表
+        private string getRecordPage_FixedAssetInventory(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+
+            string sortname = " a.FixedAssetNo asc ";
+            DataSet ds = dal.GetFixedAssetInventory(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_FixedAssetInventory(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_FixedAssetInventory(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:10%'>固定资产名称</th>"
+                           + "<th style='width:10%'>固定资产编号</th>"
+                           + "<th style='width:10%'>借用人</th>"
+                           + "<th style='width:15%'>借用日期</th>"
+                           + "<th style='width:15%'>预计归还日期</th>"
+                           + "<th style='width:20%'>备注</th>"
+                           + "<th style='width:10%'>状态</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["MaterielName"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["FixedAssetNo"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["StaffName"] + "</td>");
+                    var borrowDate = (dt.Rows[i]["BorrowDate"] == DBNull.Value) ? "" : Convert.ToDateTime(dt.Rows[i]["BorrowDate"]).ToString("yyyy-MM-dd");
+                    tblHtml.Append("<td>" + borrowDate + "</td>");
+                    var returnDate = (dt.Rows[i]["ReturnDate"] == DBNull.Value) ? "" : Convert.ToDateTime(dt.Rows[i]["ReturnDate"]).ToString("yyyy-MM-dd");
+                    tblHtml.Append("<td>" + returnDate + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Remark"] + "</td>");
+                    var status = (dt.Rows[i]["Status"].ToString() == "0") ? "借用中" : (dt.Rows[i]["Status"].ToString() == "1") ? "在库" : (dt.Rows[i]["Status"].ToString() == "2") ? "遗失" : "";
+                    tblHtml.Append("<td>" + status + "</td>");
+                    tblHtml.Append("</tr>");
+                }
+            }
+            tblHtml.Append("</tbody></table></div>");
+            dt = null;
+            return tblHtml.ToString();
+        }
+        #endregion
+
+        #region 固定资产清单列表
+        private string getRecordPage_MaterielInventory(int currentpage, int pagesize, string where, string sortfield, string sorttype)
+        {
+            StringBuilder dataPage = new StringBuilder();
+
+            string sortname = " a.MaterielID asc ";
+            DataSet ds = dal.GetMaterielInventory(currentpage, pagesize, where, sortname + sorttype);
+            int totalrow = 0;
+            int totalpage = 0;
+            if (ds != null)
+            {
+                if (ds.Tables.Count >= 2)
+                {
+                    totalrow = Convert.ToInt16(ds.Tables[0].Rows[0][0]);
+                    totalpage = Convert.ToInt16(Math.Ceiling(1.0 * totalrow / pagesize));
+                    dataPage.Append(getTable_MaterielInventory(ds.Tables[1], sortfield, sorttype));
+                    dataPage.Append(CommTools.getNav(currentpage, totalpage, totalrow, pagesize, false));
+                }
+            }
+            return dataPage.ToString();
+        }
+
+        private string getTable_MaterielInventory(DataTable dt, string sortfield, string sorttype)
+        {
+            StringBuilder tblHtml = new StringBuilder();
+            tblHtml.Append("<div id='div_maindata' class='xl_container_bingrenlist'  >"
+              + "<table cellspacing='0' cellpadding='0' class='list_tb'>"
+              + "<tr class=\"\" >");
+            tblHtml.Append("  <th style='width:10%'>序号</th>"
+                           + "<th style='width:20%'>物料名称</th>"
+                           + "<th style='width:10%'>计量单位</th>"
+                           + "<th style='width:10%'>累计入库数量</th>"
+                           + "<th style='width:10%'>库存数量</th>"
+                           + "<th style='width:10%'>领用数量</th>"
+                           + "<th style='width:10%'>在借数量</th>"
+                           + "<th style='width:10%'>遗失数量</th>"
+                           + "<th style='width:10%'>固定资产</th>"
+                           );
+            tblHtml.Append("</tr><tbody id=wjtbl>");
+            if (dt != null)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    tblHtml.Append("<tr>");
+                    tblHtml.Append("<td>" + (i + 1).ToString() + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["MaterielName"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["Unit"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["TotalStoreQuantity"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["StockQuantity"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["UseQuantity"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["BorrowQuantity"] + "</td>");
+                    tblHtml.Append("<td>" + dt.Rows[i]["LoseQuantity"] + "</td>");
+                    var fixedAssetDetail = string.Empty;
+                    if (dt.Rows[i]["IsConsumable"].ToString() == "0")
+                    {
+                        fixedAssetDetail = "<a href='javascript:void(0)' onclick=\"FollowDetailInfo('MaterielID','" + dt.Rows[i]["MaterielID"] + "')\">查看固定资产明细</a>";
+                    }
+                    tblHtml.Append("<td>" + fixedAssetDetail + "</td>");
                     tblHtml.Append("</tr>");
                 }
             }

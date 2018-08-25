@@ -9,7 +9,13 @@
     <script src="../Script/jquery-1.4.2.min.js"></script>
     <script src="../times/WdatePicker.js"></script>
     <script type="text/javascript">
+        var urlQueryDate = "";
         $(function () {
+            //获取url参数
+            var urlParam_statsType = GetQueryString("statsType");
+            var urlParam_statsValue = GetQueryString("statsValue");
+            urlQueryDate = "&statsType=" + urlParam_statsType + "&statsValue=" + urlParam_statsValue;
+
             InitRater();
             getPage(1);
             //设置iframe高度
@@ -70,7 +76,7 @@
             var pagesize = "15";
             var queryName = $("#queryName").val();
             if ($("#sel_pagesize").val() != "" && typeof ($("#sel_pagesize").val()) != "undefined") { pagesize = $("#sel_pagesize").val(); }
-            var querydata = "&queryName=" + queryName + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
+            var querydata = urlQueryDate + "&queryName=" + queryName + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
             $.ajax(
             {
                 type: "GET",
@@ -161,7 +167,7 @@
                         if (result.ServiceDate != null && result.ServiceDate != "") {
                             var serviceDate = new Date(parseInt(result.ServiceDate.substr(6))).ToString("yyyy-MM-dd");
                             $("#serviceExecuteID").empty();
-                            $("#serviceExecuteID").append("<option value='" + result.ServiceExecuteID + "'>" + serviceDate + "</option>");
+                            $("#serviceExecuteID").append("<option value='" + result.ServiceExecuteID + "'>" + serviceDate + "  " + result.StaffName + "</option>");
                             $("#serviceExecuteID").val(result.ServiceExecuteID)
                         }
                         else {

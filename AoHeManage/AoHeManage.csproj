@@ -149,6 +149,8 @@
     <Content Include="SubPage\AssessTemplate.html" />
     <Content Include="SubPage\BasicInfoManage.html" />
     <Content Include="SubPage\DailyRecord.html" />
+    <Content Include="SubPage\FixedAssetInventory.html" />
+    <Content Include="SubPage\MaterielInventory.html" />
     <Content Include="SubPage\StatsAccident.html" />
     <Content Include="SubPage\StatsDailyRecord.html" />
     <Content Include="SubPage\DailyRecordStats.html" />
@@ -191,6 +193,7 @@
     <Content Include="SubPage\StaffManage.html" />
     <Content Include="SubPage\Guest.html" />
     <Content Include="SubPage\StaffTransfer.html" />
+    <Content Include="SubPage\StatsGuestEvaluation.html" />
     <Content Include="SubPage\StoreManage.html" />
     <Content Include="SubPage\Supplier.html" />
     <Content Include="SubPage\UseManage.html" />

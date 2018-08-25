@@ -4432,6 +4432,123 @@ namespace AoHeManage.Dal
             return DbHelperSQL.Query(strSql.ToString());
         }
 
+        public DataSet GetStatsGuestEvaluation(int currentPage, int pageSize, string strWhere, string filedOrder, string statsType)
+        {
+            StringBuilder strSql = new StringBuilder();
+            switch (statsType)
+            {
+                case "Product":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select e.ProductName,count(1) as OccurCount,d.ProductID from serviceevaluation a  ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID=b.ID  ");
+                    strSql.AppendLine(" inner join serviceexecute c on a.ServiceExecuteID=c.ID  ");
+                    strSql.AppendLine(" inner join servicereserve d on c.ServiceReserveID=d.ID  ");
+                    strSql.AppendLine(" inner join product e on d.ProductID=e.ID  ");
+                    strSql.AppendLine(" inner join staffinfo f on c.ServiceStaff=f.StaffNo ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by d.ProductID,e.ProductName ) tempa; ");
+
+                    strSql.AppendLine(" select e.ProductName,count(1) as OccurCount,d.ProductID from serviceevaluation a  ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID=b.ID  ");
+                    strSql.AppendLine(" inner join serviceexecute c on a.ServiceExecuteID=c.ID  ");
+                    strSql.AppendLine(" inner join servicereserve d on c.ServiceReserveID=d.ID  ");
+                    strSql.AppendLine(" inner join product e on d.ProductID=e.ID  ");
+                    strSql.AppendLine(" inner join staffinfo f on c.ServiceStaff=f.StaffNo ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by d.ProductID,e.ProductName  ");
+                    break;
+                case "Staff":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select f.Name as StaffName,count(1) as OccurCount,c.ServiceStaff from serviceevaluation a  ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID=b.ID  ");
+                    strSql.AppendLine(" inner join serviceexecute c on a.ServiceExecuteID=c.ID  ");
+                    strSql.AppendLine(" inner join servicereserve d on c.ServiceReserveID=d.ID  ");
+                    strSql.AppendLine(" inner join product e on d.ProductID=e.ID  ");
+                    strSql.AppendLine(" inner join staffinfo f on c.ServiceStaff=f.StaffNo ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by c.ServiceStaff,f.Name ) tempa; ");
+
+                    strSql.AppendLine(" select f.Name as StaffName,count(1) as OccurCount,c.ServiceStaff from serviceevaluation a  ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID=b.ID  ");
+                    strSql.AppendLine(" inner join serviceexecute c on a.ServiceExecuteID=c.ID  ");
+                    strSql.AppendLine(" inner join servicereserve d on c.ServiceReserveID=d.ID  ");
+                    strSql.AppendLine(" inner join product e on d.ProductID=e.ID  ");
+                    strSql.AppendLine(" inner join staffinfo f on c.ServiceStaff=f.StaffNo ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by c.ServiceStaff,f.Name  ");
+                    break;
+                case "Guest":
+                    strSql.AppendLine(" select count(1) as totalrow from ( ");
+                    strSql.AppendLine(" select b.Name as GuestName,count(1) as OccurCount,a.GuestID from serviceevaluation a  ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID=b.ID  ");
+                    strSql.AppendLine(" inner join serviceexecute c on a.ServiceExecuteID=c.ID  ");
+                    strSql.AppendLine(" inner join servicereserve d on c.ServiceReserveID=d.ID  ");
+                    strSql.AppendLine(" inner join product e on d.ProductID=e.ID  ");
+                    strSql.AppendLine(" inner join staffinfo f on c.ServiceStaff=f.StaffNo ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by a.GuestID,b.Name ) tempa; ");
+
+                    strSql.AppendLine(" select b.Name as GuestName,count(1) as OccurCount,a.GuestID from serviceevaluation a  ");
+                    strSql.AppendLine(" inner join guestinfo b on a.GuestID=b.ID  ");
+                    strSql.AppendLine(" inner join serviceexecute c on a.ServiceExecuteID=c.ID  ");
+                    strSql.AppendLine(" inner join servicereserve d on c.ServiceReserveID=d.ID  ");
+                    strSql.AppendLine(" inner join product e on d.ProductID=e.ID  ");
+                    strSql.AppendLine(" inner join staffinfo f on c.ServiceStaff=f.StaffNo ");
+                    strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+                    strSql.AppendLine(" group by a.GuestID,b.Name  ");
+                    break;
+                default:
+                    break;
+            }
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+
+        public DataSet GetFixedAssetInventory(int currentPage, int pageSize, string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine("  select COUNT(1) as totalrow from(  ");
+            strSql.AppendLine(" select a.*,b.`Name` as MaterielName,c.`Name` as StaffName from fixedassetstock a  ");
+            strSql.AppendLine(" inner join materiel b on a.MaterielID = b.ID ");
+            strSql.AppendLine(" left join staffinfo c on a.BorrowPeople = c.StaffNo ");
+            strSql.AppendFormat(" where 1=1 {0} ) tempfortotal;", strWhere);
+
+            strSql.AppendLine(" select a.*,b.`Name` as MaterielName,c.`Name` as StaffName from fixedassetstock a  ");
+            strSql.AppendLine(" inner join materiel b on a.MaterielID = b.ID ");
+            strSql.AppendLine(" left join staffinfo c on a.BorrowPeople = c.StaffNo ");
+            strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+
+        public DataSet GetMaterielInventory(int currentPage, int pageSize, string strWhere, string filedOrder)
+        {
+            StringBuilder strSql = new StringBuilder();
+            strSql.AppendLine("  select COUNT(1) as totalrow from(  ");
+            strSql.AppendLine(" select a.*,b.`Name` as MaterielName,b.Unit,b.IsConsumable from materielstock a  ");
+            strSql.AppendLine(" inner join materiel b on a.MaterielID = b.ID ");
+            strSql.AppendFormat(" where 1=1 {0} ) tempfortotal;", strWhere);
+
+            strSql.AppendLine(" select a.*,b.`Name` as MaterielName,b.Unit,b.IsConsumable from materielstock a  ");
+            strSql.AppendLine(" inner join materiel b on a.MaterielID = b.ID ");
+            strSql.AppendFormat(" where 1=1 {0} ", strWhere);
+            if (filedOrder.Trim() != "")
+            {
+                strSql.Append(" order by " + filedOrder);
+            }
+            strSql.AppendFormat(" LIMIT {0},{1} ", (currentPage - 1) * pageSize, pageSize);
+            return DbHelperSQL.Query(strSql.ToString());
+        }
+
         #endregion
     }
 }

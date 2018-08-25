@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>意外事件统计</title>
+    <title>物料清单</title>
     <meta charset="utf-8" />
     <link href="../Css/style.css" rel="stylesheet" />
     <script src="../Script/jquery-1.4.2.min.js"></script>
@@ -59,27 +59,23 @@
             }
         }
         $(document).ready(function () {
-            var beginDate = new Date().AddMonths(-6).ToString("yyyy-MM-dd");
-            var endDate = new Date().ToString("yyyy-MM-dd");
-            $("#beginDate").val(beginDate);
-            $("#endDate").val(endDate);
             getPage(1);
         });
         function getPage(currentpage) {
-            var beginDate = $("#beginDate").val();
-            var endDate = $("#endDate").val();
-            var statsType = $("#statsType").val();
+            var ifStock = $("#ifStock").is(":checked");
+            var ifBorrow = $("#ifBorrow").is(":checked");
+            var materielName = $("#materielName").val();
             var pagesize = "15";
             if ($("#sel_pagesize").val() != "" && typeof ($("#sel_pagesize").val()) != "undefined") { pagesize = $("#sel_pagesize").val(); }
-            var querydata = "&statsType=" + statsType + "&beginDate=" + beginDate + "&endDate=" + endDate + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
+            var querydata = "&materielName=" + materielName + "&ifStock=" + ifStock + "&ifBorrow=" + ifBorrow + "&currentpage=" + currentpage + "&pagesize=" + pagesize + "&sortfield=" + sortfield + "&sorttype=" + sorttype;
             $.ajax(
                 {
                     type: "GET",
-                    url: "../MainHandler.ashx?action=getRecordPage_StatsAccident",
+                    url: "../MainHandler.ashx?action=getRecordPage_MaterielInventory",
                     dataType: 'text',
                     data: encodeURI(querydata),
                     success: function (result) {
-                        $("#stats_tb").html(result);
+                        $("#materielInventory").html(result);
                         //设置iframe高度
                         var iframeHeight = $("#iframInfo", window.parent.document).contents().find("body").height();
                         $("#iframInfo", window.parent.document).height(iframeHeight);
@@ -87,32 +83,22 @@
                 });
         }
         function FollowDetailInfo(statsType, value) {
-            window.parent.ChangeIframe('Accident', 'statsType=' + statsType + '&statsValue=' + value);
+            window.parent.ChangeIframe('FixedAssetInventory', 'statsType=' + statsType + '&statsValue=' + value);
         }
     </script>
 </head>
 <body>
     <div>
         <fieldset>
-            <legend><span class="field_leg">意外事件统计</span></legend>
+            <legend><span class="field_leg">物料清单</span></legend>
             <div class="select_where">
-                <span>查询日期：</span>
-                <input type="text" id="beginDate" class="Wdate smallInput" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
-                <span>至</span>
-                <input type="text" id="endDate" class="Wdate smallInput" readonly="readonly" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" />
-                <span class="ml_40">统计维度：</span>
-                <select id="statsType" class="smallSelect">
-                    <option value="AccidentType">按事件类型</option>
-                    <option value="FloorID">按楼层</option>
-                    <option value="RoomNo">按房间</option>
-                    <option value="Name">按客人</option>
-                    <option value="Sex">按性别</option>
-                    <option value="Age">按年龄段</option>
-                    <option value="NurseLevel">按护理等级</option>
-                </select>
+                <span>物料名称：</span>
+                <input type="text" id="materielName" class="smallInput" />
+                <span class="ml_40"><input type="checkbox" class="cb" id="ifStock" name="ifStock"/>有库存</span>
+                <span class="ml_40"><input type="checkbox" class="cb" id="ifBorrow" name="ifBorrow"/>有在借</span>
                 <span class="ml_50"><input class="selectBtn" type="button" value="查询" onclick="getPage(1)" /></span>
             </div>
-            <div id="stats_tb">
+            <div id="materielInventory">
             </div>
         </fieldset>
     </div>
